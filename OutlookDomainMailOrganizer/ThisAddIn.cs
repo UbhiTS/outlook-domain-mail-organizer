@@ -26,6 +26,7 @@ namespace OutlookDomainMailOrganizer
         #region Constants
 
         const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+        const string PR_SENT_REPRESENTING_ENTRYID = @"http://schemas.microsoft.com/mapi/proptag/0x00410102";
 
         #endregion
 
@@ -34,8 +35,10 @@ namespace OutlookDomainMailOrganizer
         private void ODMOAddIn_Startup(object sender, System.EventArgs e)
         {
             InitializeDomainsDatabase();
-
+            
             this.Application.NewMail += new ApplicationEvents_11_NewMailEventHandler(ProcessUnreadMessages);
+
+            ProcessUnreadMessages();
         }
 
         private void ODMOAddIn_Shutdown(object sender, System.EventArgs e)
@@ -79,15 +82,16 @@ namespace OutlookDomainMailOrganizer
 
                 object message = unreadItems[i];
 
+                if (message == null) continue;
+
                 switch (message)
                 {
-                    case MailItem _ when message != null:
+                    case MailItem _:
                         {
                             Debug.Write(" mail");
 
                             var mail = message as MailItem;
-
-                            var matchedDomain = GetMailSenderDomain(mail);
+                            var matchedDomain = GetDomainFromMailSender(mail);
 
                             if (matchedDomain != null)
                             {
@@ -97,7 +101,7 @@ namespace OutlookDomainMailOrganizer
                             }
                             else
                             {
-                                matchedDomain = GetFirstMatchedRecipientDomain(mail.Recipients);
+                                matchedDomain = GetDomainFromFirstMatchedRecipient(mail.Recipients);
 
                                 if (matchedDomain != null)
                                 {
@@ -113,15 +117,26 @@ namespace OutlookDomainMailOrganizer
                         {
                             Debug.Write(" appointment");
 
-                            var appointment = message as AppointmentItem;
-                            var matchedDomain = GetFirstMatchedRecipientDomain(appointment.Recipients);
-                            
+                            var appt = message as AppointmentItem;
+                            var organizer = appt.GetOrganizer();
+                            var matchedDomain = GetDomainFromAddressEntry(organizer);
+
                             if (matchedDomain != null)
                             {
-                                appointment.Move(domainsDb[matchedDomain]);
-                                Debug.Write("| moved <recipient> (" + matchedDomain + ")");
+                                appt.Move(domainsDb[matchedDomain]);
+                                Debug.Write("| moved <sender> (" + matchedDomain + ")");
+                                continue;
                             }
+                            else
+                            {
+                                matchedDomain = GetDomainFromFirstMatchedRecipient(appt.Recipients);
 
+                                if (matchedDomain != null)
+                                {
+                                    appt.Move(domainsDb[matchedDomain]);
+                                    Debug.Write("| moved <recipient> (" + matchedDomain + ")");
+                                }
+                            }
                             break;
                         }
 
@@ -130,14 +145,24 @@ namespace OutlookDomainMailOrganizer
                             Debug.Write(" meeting");
 
                             var meeting = message as MeetingItem;
-                            var matchedDomain = GetFirstMatchedRecipientDomain(meeting.Recipients);
+                            var matchedDomain = GetDomainFromMeetingOrganizer(meeting);
 
                             if (matchedDomain != null)
                             {
                                 meeting.Move(domainsDb[matchedDomain]);
-                                Debug.Write("| moved <recipient> (" + matchedDomain + ")");
+                                Debug.Write("| moved <sender> (" + matchedDomain + ")");
+                                continue;
                             }
+                            else
+                            {
+                                matchedDomain = GetDomainFromFirstMatchedRecipient(meeting.Recipients);
 
+                                if (matchedDomain != null)
+                                {
+                                    meeting.Move(domainsDb[matchedDomain]);
+                                    Debug.Write("| moved <recipient> (" + matchedDomain + ")");
+                                }
+                            }
                             break;
                         }
 
@@ -166,84 +191,45 @@ namespace OutlookDomainMailOrganizer
 
         #region Helper Methods
 
-        private string GetMailSenderDomain(Outlook.MailItem mail)
+        private string GetDomainFromMailSender(MailItem mail)
         {
             // https://learn.microsoft.com/en-us/office/client-developer/outlook/pia/how-to-get-the-smtp-address-of-the-sender-of-a-mail-item
 
             if (mail == null) return null;
 
-            string senderSmtpAddress = null;
+            if (mail.SenderEmailType == "EX") return GetDomainFromAddressEntry(mail.Sender);
 
-            if (mail.SenderEmailType == "EX")
-            {
-                var sender = mail.Sender;
-
-                if (sender == null) return null;
-
-                if (sender.AddressEntryUserType == OlAddressEntryUserType.olExchangeUserAddressEntry || sender.AddressEntryUserType == OlAddressEntryUserType.olExchangeRemoteUserAddressEntry)
-                {
-                    var exchUser = sender.GetExchangeUser();
-                    if (exchUser != null) senderSmtpAddress = exchUser.PrimarySmtpAddress;
-                    else return null; // probably left the organization (unknown, MAPI not found)
-                }
-                else
-                {
-                    try { senderSmtpAddress = sender.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS); }
-                    catch (System.Exception ex) { Debug.Write(ex.Message); }
-                }
-            }
-            else
-            {
-                senderSmtpAddress = mail.SenderEmailAddress;
-            }
-
-            if (senderSmtpAddress != null)
-            {
-                Debug.Write(" " + senderSmtpAddress);
-
-                var senderSmtpAddressArray = senderSmtpAddress.Split('@');
-                if (senderSmtpAddressArray.Length > 2)
-                {
-                    var senderDomain = senderSmtpAddressArray[1];
-
-                    if (domainsDb.ContainsKey(senderDomain))
-                    {
-                        return senderDomain;
-                    }
-                }
-            }
-
-            return null;
+            return GetDomainFromEmailAddress(mail.SenderEmailAddress);
         }
 
-        private string GetFirstMatchedRecipientDomain(Recipients recipients)
+        private string GetDomainFromMeetingOrganizer(MeetingItem meeting)
         {
+            if (meeting == null) return null;
+
+            var organizerEntryID = meeting.PropertyAccessor.BinaryToString(meeting.PropertyAccessor.GetProperty(PR_SENT_REPRESENTING_ENTRYID));
+            var organizer = Application.Session.GetAddressEntryFromID(organizerEntryID);
+
+            if (organizer == null) return null;
+
+            return GetDomainFromAddressEntry(organizer);
+        }
+
+        private string GetDomainFromFirstMatchedRecipient(Recipients recipients)
+        {
+            if (recipients == null) return null;
+            
             foreach (Recipient recipient in recipients)
             {
-                var recipientSmtpAddress = GetSMTPAddressForRecipient(recipient);
-
-                if (recipientSmtpAddress != null)
-                {
-                    Debug.Write(" " + recipientSmtpAddress);
-
-                    var recipientSmtpAddressArray = recipientSmtpAddress.Split('@');
-
-                    if (recipientSmtpAddressArray.Length < 2) continue;
-
-                    var recipientDomain = recipientSmtpAddressArray[1];
-
-                    if (domainsDb.ContainsKey(recipientDomain))
-                    {
-                        return recipientDomain;
-                    }
-                }
+                return GetDomainFromEmailAddress(GetEmailAddressFromRecipient(recipient));
             }
 
             return null;
         }
 
-        private string GetSMTPAddressForRecipient(Recipient recipient)
+        private string GetEmailAddressFromRecipient(Recipient recipient)
         {
+            if (recipient == null) return null;
+            
             // https://learn.microsoft.com/en-us/office/client-developer/outlook/pia/how-to-get-the-e-mail-address-of-a-recipient
 
             var pa = recipient.PropertyAccessor;
@@ -253,6 +239,56 @@ namespace OutlookDomainMailOrganizer
             catch (System.Exception ex) { Debug.Write(ex.Message); } // probably left the organization (unknown)
 
             return smtpAddress;
+        }
+
+        private string GetDomainFromAddressEntry(AddressEntry addressEntry)
+        {
+            if (addressEntry == null) return null;
+
+            string smtpAddress;
+
+            // check to see if the addressEntry object is valid
+            // for some unknown reason, this is sometimes not null but invalid
+            try 
+            {
+                if (addressEntry.AddressEntryUserType == OlAddressEntryUserType.olExchangeUserAddressEntry || addressEntry.AddressEntryUserType == OlAddressEntryUserType.olExchangeRemoteUserAddressEntry)
+                {
+                    var exchUser = addressEntry.GetExchangeUser();
+                    if (exchUser != null) smtpAddress = exchUser.PrimarySmtpAddress;
+                    else return null; // probably left the organization (unknown, MAPI not found)
+                }
+            } 
+            catch { return null; }
+            
+            
+            try 
+            { 
+                smtpAddress = addressEntry.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS); 
+            }
+            catch { return null; }
+
+            return GetDomainFromEmailAddress(smtpAddress);
+        }
+
+        private string GetDomainFromEmailAddress(string smtpAddress)
+        {
+            if (smtpAddress == null) return null;
+
+            // Debug.Write(" " + smtpAddress);
+
+            var smtpAddressArray = smtpAddress.Split('@');
+
+            if (smtpAddressArray.Length == 2)
+            {
+                var domain = smtpAddressArray[1];
+
+                if (domainsDb.ContainsKey(domain))
+                {
+                    return domain;
+                }
+            }
+
+            return null;
         }
 
         #endregion
