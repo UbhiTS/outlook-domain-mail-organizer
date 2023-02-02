@@ -220,7 +220,9 @@ namespace OutlookDomainMailOrganizer
             
             foreach (Recipient recipient in recipients)
             {
-                return GetDomainFromEmailAddress(GetEmailAddressFromRecipient(recipient));
+                var domain = GetDomainFromEmailAddress(GetEmailAddressFromRecipient(recipient));
+
+                if (domain != null) return domain;
             }
 
             return null;
