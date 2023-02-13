@@ -35,10 +35,10 @@ namespace OutlookDomainMailOrganizer
         private void ODMOAddIn_Startup(object sender, System.EventArgs e)
         {
             InitializeDomainsDatabase();
-            
-            this.Application.NewMail += new ApplicationEvents_11_NewMailEventHandler(ProcessUnreadMessages);
 
             ProcessUnreadMessages();
+
+            this.Application.NewMail += new ApplicationEvents_11_NewMailEventHandler(ProcessUnreadMessages);
         }
 
         private void ODMOAddIn_Shutdown(object sender, System.EventArgs e)
@@ -91,23 +91,12 @@ namespace OutlookDomainMailOrganizer
                             Debug.Write(" mail");
 
                             var mail = message as MailItem;
-                            var matchedDomain = GetDomainFromMailSender(mail);
+                            var matchedDomain = GetDomainFromMailSender(mail) ?? GetDomainFromFirstMatchedRecipient(mail.Recipients) ?? GetDomainFromBody(mail.Body);
 
                             if (matchedDomain != null)
                             {
                                 mail.Move(domainsDb[matchedDomain]);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
-                                continue;
-                            }
-                            else
-                            {
-                                matchedDomain = GetDomainFromFirstMatchedRecipient(mail.Recipients);
-
-                                if (matchedDomain != null)
-                                {
-                                    mail.Move(domainsDb[matchedDomain]);
-                                    Debug.Write("| moved <recipient> (" + matchedDomain + ")");
-                                }
                             }
 
                             break;
@@ -119,24 +108,15 @@ namespace OutlookDomainMailOrganizer
 
                             var appt = message as AppointmentItem;
                             var organizer = appt.GetOrganizer();
-                            var matchedDomain = GetDomainFromAddressEntry(organizer);
+
+                            var matchedDomain = GetDomainFromAddressEntry(organizer) ?? GetDomainFromFirstMatchedRecipient(appt.Recipients) ?? GetDomainFromBody(appt.Body);
 
                             if (matchedDomain != null)
                             {
                                 appt.Move(domainsDb[matchedDomain]);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
-                                continue;
                             }
-                            else
-                            {
-                                matchedDomain = GetDomainFromFirstMatchedRecipient(appt.Recipients);
-
-                                if (matchedDomain != null)
-                                {
-                                    appt.Move(domainsDb[matchedDomain]);
-                                    Debug.Write("| moved <recipient> (" + matchedDomain + ")");
-                                }
-                            }
+                            
                             break;
                         }
 
@@ -145,24 +125,14 @@ namespace OutlookDomainMailOrganizer
                             Debug.Write(" meeting");
 
                             var meeting = message as MeetingItem;
-                            var matchedDomain = GetDomainFromMeetingOrganizer(meeting);
+                            var matchedDomain = GetDomainFromMeetingOrganizer(meeting) ?? GetDomainFromFirstMatchedRecipient(meeting.Recipients) ?? GetDomainFromBody(meeting.Body);
 
                             if (matchedDomain != null)
                             {
                                 meeting.Move(domainsDb[matchedDomain]);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
-                                continue;
                             }
-                            else
-                            {
-                                matchedDomain = GetDomainFromFirstMatchedRecipient(meeting.Recipients);
 
-                                if (matchedDomain != null)
-                                {
-                                    meeting.Move(domainsDb[matchedDomain]);
-                                    Debug.Write("| moved <recipient> (" + matchedDomain + ")");
-                                }
-                            }
                             break;
                         }
 
@@ -285,6 +255,21 @@ namespace OutlookDomainMailOrganizer
                 var domain = smtpAddressArray[1];
 
                 if (domainsDb.ContainsKey(domain))
+                {
+                    return domain;
+                }
+            }
+
+            return null;
+        }
+
+        private string GetDomainFromBody(string body)
+        {
+            if (body == null || body.Length <= 4) return null;
+
+            foreach (var domain in domainsDb.Keys)
+            {
+                if (body.Contains(domain))
                 {
                     return domain;
                 }
