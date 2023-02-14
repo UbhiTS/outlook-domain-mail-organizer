@@ -217,7 +217,7 @@ namespace OutlookDomainMailOrganizer
         {
             if (addressEntry == null) return null;
 
-            string smtpAddress;
+            string smtpAddress = null;
 
             // check to see if the addressEntry object is valid
             // for some unknown reason, this is sometimes not null but invalid
@@ -226,18 +226,27 @@ namespace OutlookDomainMailOrganizer
                 if (addressEntry.AddressEntryUserType == OlAddressEntryUserType.olExchangeUserAddressEntry || addressEntry.AddressEntryUserType == OlAddressEntryUserType.olExchangeRemoteUserAddressEntry)
                 {
                     var exchUser = addressEntry.GetExchangeUser();
-                    if (exchUser != null) smtpAddress = exchUser.PrimarySmtpAddress;
-                    else return null; // probably left the organization (unknown, MAPI not found)
+
+                    if (exchUser != null)
+                    {
+                        smtpAddress = exchUser.PrimarySmtpAddress;
+                    }
+                    else
+                    {
+                        // else the user has probably left the organization (unknown, MAPI not found)
+                    }
                 }
             } 
-            catch { return null; }
-            
+            catch { }
             
             try 
-            { 
-                smtpAddress = addressEntry.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS); 
+            {
+                if (smtpAddress == null)
+                {
+                    smtpAddress = addressEntry.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS);
+                }
             }
-            catch { return null; }
+            catch { }
 
             return GetDomainFromEmailAddress(smtpAddress);
         }
