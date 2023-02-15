@@ -247,7 +247,7 @@ namespace OutlookDomainMailOrganizer
             
             try 
             {
-                if (smtpAddress == null)
+                if (smtpAddress == null || smtpAddress == string.Empty)
                 {
                     smtpAddress = addressEntry.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS);
                 }
@@ -256,7 +256,7 @@ namespace OutlookDomainMailOrganizer
 
             try
             {
-                if (smtpAddress == null)
+                if (smtpAddress == null || smtpAddress == string.Empty)
                 {
                     smtpAddress = addressEntry.Address;
                 }
