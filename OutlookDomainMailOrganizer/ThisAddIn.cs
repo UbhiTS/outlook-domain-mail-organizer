@@ -91,7 +91,9 @@ namespace OutlookDomainMailOrganizer
                             Debug.Write(" mail");
 
                             var mail = message as MailItem;
-                            var matchedDomain = GetDomainFromMailSender(mail) ?? GetDomainFromFirstMatchedRecipient(mail.Recipients) ?? GetDomainFromBody(mail.Body);
+                            var matchedDomain = GetDomainFromMailSender(mail) 
+                                ?? GetDomainFromFirstMatchedRecipient(mail.Recipients) 
+                                ?? GetDomainFromBody(mail.Body);
 
                             if (matchedDomain != null)
                             {
@@ -109,7 +111,9 @@ namespace OutlookDomainMailOrganizer
                             var appt = message as AppointmentItem;
                             var organizer = appt.GetOrganizer();
 
-                            var matchedDomain = GetDomainFromAddressEntry(organizer) ?? GetDomainFromFirstMatchedRecipient(appt.Recipients) ?? GetDomainFromBody(appt.Body);
+                            var matchedDomain = GetDomainFromAddressEntry(organizer) 
+                                ?? GetDomainFromFirstMatchedRecipient(appt.Recipients) 
+                                ?? GetDomainFromBody(appt.Body);
 
                             if (matchedDomain != null)
                             {
@@ -125,7 +129,9 @@ namespace OutlookDomainMailOrganizer
                             Debug.Write(" meeting");
 
                             var meeting = message as MeetingItem;
-                            var matchedDomain = GetDomainFromMeetingOrganizer(meeting) ?? GetDomainFromFirstMatchedRecipient(meeting.Recipients) ?? GetDomainFromBody(meeting.Body);
+                            var matchedDomain = GetDomainFromMeetingOrganizer(meeting) 
+                                ?? GetDomainFromFirstMatchedRecipient(meeting.Recipients) 
+                                ?? GetDomainFromBody(meeting.Body);
 
                             if (matchedDomain != null)
                             {
@@ -248,12 +254,21 @@ namespace OutlookDomainMailOrganizer
             }
             catch { }
 
+            try
+            {
+                if (smtpAddress == null)
+                {
+                    smtpAddress = addressEntry.Address;
+                }
+            }
+            catch { }
+
             return GetDomainFromEmailAddress(smtpAddress);
         }
 
         private string GetDomainFromEmailAddress(string smtpAddress)
         {
-            if (smtpAddress == null) return null;
+            if (smtpAddress == null || smtpAddress == string.Empty) return null;
 
             // Debug.Write(" " + smtpAddress);
 
