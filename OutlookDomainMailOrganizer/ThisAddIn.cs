@@ -12,11 +12,19 @@ using System.Runtime.InteropServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using static System.Net.Mime.MediaTypeNames;
+using System.Threading;
 
 namespace OutlookDomainMailOrganizer
 {
     public partial class ThisAddIn
     {
+        #region Configuration Parameters
+
+        string domainRootFolder = "Customers";
+
+        #endregion
+
         #region Private Members
 
         Dictionary<string, Folder> domainsDb;
@@ -25,8 +33,9 @@ namespace OutlookDomainMailOrganizer
 
         #region Constants
 
-        const string PR_SMTP_ADDRESS = "http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
-        const string PR_SENT_REPRESENTING_ENTRYID = @"http://schemas.microsoft.com/mapi/proptag/0x00410102";
+        const string PR_SMTP_ADDRESS                = @"http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
+        const string PR_SENT_REPRESENTING_ENTRYID   = @"http://schemas.microsoft.com/mapi/proptag/0x00410102";
+        const string PR_SORT_POSITION               = @"http://schemas.microsoft.com/mapi/proptag/0x30200102";
 
         #endregion
 
@@ -56,7 +65,7 @@ namespace OutlookDomainMailOrganizer
             domainsDb = new Dictionary<string, Folder>();
 
             var inbox = (MAPIFolder)this.Application.ActiveExplorer().Session.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
-            var customers = inbox.Parent.Folders["Customers"].Folders;
+            var customers = inbox.Parent.Folders[domainRootFolder].Folders;
 
             foreach (object customer in customers)
             {
@@ -65,6 +74,8 @@ namespace OutlookDomainMailOrganizer
 
                 domainsDb.Add(customerName, customerFolder);
             }
+
+
         }
 
         private void ProcessUnreadMessages()
@@ -160,6 +171,45 @@ namespace OutlookDomainMailOrganizer
                 }
 
                 Debug.WriteLine("");
+            }
+
+            SortFoldersByChronology().Wait();
+        }
+
+        private async Task SortFoldersByChronology()
+        {
+            var chronoDb = new SortedDictionary<DateTime, List<Folder>>();
+
+            foreach (var folderName in domainsDb.Keys)
+            {
+                var items = domainsDb[folderName].Items;
+
+                if (items != null)
+                {
+                    items.Sort("[ReceivedTime]");
+                    var lastItem = items.GetLast();
+
+                    if (lastItem != null)
+                    {
+                        if (chronoDb.ContainsKey(lastItem.ReceivedTime)) chronoDb[lastItem.ReceivedTime].Add(domainsDb[folderName]);
+                        else chronoDb.Add(lastItem.ReceivedTime, new List<Folder>() { domainsDb[folderName] });
+                        continue;
+                    }
+                }
+                
+                if (chronoDb.ContainsKey(DateTime.MinValue)) chronoDb[DateTime.MinValue].Add(domainsDb[folderName]);
+                else chronoDb.Add(DateTime.MinValue, new List<Folder>() { domainsDb[folderName] });
+            }
+
+            var i = 0;
+
+            foreach (var folders in chronoDb.Reverse())
+            {
+                foreach (var folder in folders.Value)
+                {
+                    folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(i++.ToString("X2")));
+                    await Task.Delay(50); // without this delay, the folder sorting on the UI DOES NOT WORK as expected
+                }
             }
         }
 
