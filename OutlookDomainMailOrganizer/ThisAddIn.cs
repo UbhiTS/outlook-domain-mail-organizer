@@ -213,6 +213,8 @@ namespace OutlookDomainMailOrganizer
                     await Task.Delay(50); // without this delay, the folder sorting on the UI behaves unexpectedly as well :(
                 }
             }
+
+            altSortNumbering = !altSortNumbering;
         }
 
         #endregion
