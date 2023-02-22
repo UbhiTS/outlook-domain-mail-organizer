@@ -29,6 +29,8 @@ namespace OutlookDomainMailOrganizer
 
         Dictionary<string, Folder> domainsDb;
 
+        bool altSortNumbering = false;
+
         #endregion
 
         #region Constants
@@ -201,14 +203,14 @@ namespace OutlookDomainMailOrganizer
                 else chronoDb.Add(DateTime.MinValue, new List<Folder>() { domainsDb[folderName] });
             }
 
-            var i = 0;
+            var i = altSortNumbering ? 0 : 255; // this is eliminates two folders getting the same sort position which causes unexpected sort behavior
 
-            foreach (var folders in chronoDb.Reverse())
+            foreach (var folders in altSortNumbering ? chronoDb.Reverse() : chronoDb)
             {
                 foreach (var folder in folders.Value)
                 {
-                    folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(i++.ToString("X2")));
-                    await Task.Delay(50); // without this delay, the folder sorting on the UI DOES NOT WORK as expected
+                    folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary((altSortNumbering ? i++ : i--).ToString("X2")));
+                    await Task.Delay(50); // without this delay, the folder sorting on the UI behaves unexpectedly as well :(
                 }
             }
         }
