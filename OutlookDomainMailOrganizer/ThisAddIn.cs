@@ -271,10 +271,14 @@ namespace OutlookDomainMailOrganizer
             {
                 foreach (var folder in folders.Value)
                 {
-                    var currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION));
+                    string currentPosition = null;
+
+                    try { currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION)); }
+                    catch { }
+                     
                     var newPosition = sortPositionCounter.ToString("X2");
 
-                    if (currentPosition != newPosition)
+                    if (currentPosition == null || currentPosition != newPosition)
                     {
                         folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(newPosition));
                     }
