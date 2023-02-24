@@ -32,6 +32,7 @@ namespace OutlookDomainMailOrganizer
         Dictionary<string, Folder> domainsDb;
         Folder inboxFolder = null;
         Folder domainsFolder = null;
+        int i;
 
         #endregion
 
@@ -60,6 +61,7 @@ namespace OutlookDomainMailOrganizer
             InitializeAddIn();
             InitializeDomainsDatabase();
             ProcessUnreadMessages(inboxFolder);
+            SortFoldersByChronology();
             SubscribeToEvents();
         }
 
@@ -158,7 +160,9 @@ namespace OutlookDomainMailOrganizer
 
                             if (matchedDomain != null)
                             {
-                                mail.Move(domainsDb[matchedDomain]);
+                                var matchedFolder = domainsDb[matchedDomain];
+                                mail.Move(matchedFolder);
+                                MoveFolderToTop(matchedFolder);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
                             }
 
@@ -178,7 +182,9 @@ namespace OutlookDomainMailOrganizer
 
                             if (matchedDomain != null)
                             {
-                                appt.Move(domainsDb[matchedDomain]);
+                                var matchedFolder = domainsDb[matchedDomain];
+                                appt.Move(matchedFolder);
+                                MoveFolderToTop(matchedFolder);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
                             }
                             
@@ -196,7 +202,9 @@ namespace OutlookDomainMailOrganizer
 
                             if (matchedDomain != null)
                             {
-                                meeting.Move(domainsDb[matchedDomain]);
+                                var matchedFolder = domainsDb[matchedDomain];
+                                meeting.Move(matchedFolder);
+                                MoveFolderToTop(matchedFolder);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
                             }
 
@@ -222,8 +230,6 @@ namespace OutlookDomainMailOrganizer
 
                 Debug.WriteLine("");
             }
-
-            SortFoldersByChronology();
         }
 
         private void SortFoldersByChronology()
@@ -253,14 +259,34 @@ namespace OutlookDomainMailOrganizer
                 else chronoDb.Add(DateTime.MinValue, new List<Folder>() { domainsDb[folderName] });
             }
 
-            var i = 11;
+            i = 255;
 
-            foreach (var folders in chronoDb.Reverse())
+            foreach (var folders in chronoDb)
             {
                 foreach (var folder in folders.Value)
                 {
-                    folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(i++.ToString("X2")));
+                    var currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION));
+                    var newPosition = i.ToString("X2");
+
+                    if (currentPosition != newPosition)
+                    {
+                        folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(newPosition));
+                    }
+
+                    i--;
                 }
+            }
+        }
+
+        private void MoveFolderToTop(Folder folder)
+        {
+            var currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION));
+            var topPosition = (i + 1).ToString("X2");
+
+            if (currentPosition != topPosition)
+            {
+                folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(i.ToString("X2")));
+                i--;
             }
         }
 
