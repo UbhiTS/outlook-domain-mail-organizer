@@ -35,6 +35,16 @@ namespace OutlookDomainMailOrganizer
 
         #endregion
 
+        #region Properties
+
+        bool ChronoSortEnabled
+        {
+            get { return Globals.Ribbons.Ribbon1.chkChronoSort.Checked; }
+            set { Globals.Ribbons.Ribbon1.chkChronoSort.Checked = value; }
+        }
+
+        #endregion
+
         #region Constants
 
         const string PR_SMTP_ADDRESS                = @"http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
@@ -66,7 +76,8 @@ namespace OutlookDomainMailOrganizer
         private void SubscribeToEvents()
         {
             Application.NewMail += NewMail;
-            Globals.Ribbons.Ribbon1.btnOrganize.Click += btnOrganize_Click;
+            Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
+            Globals.Ribbons.Ribbon1.chkChronoSort.Click += chkChronoSort_Click;
         }
 
         private void NewMail()
@@ -74,9 +85,15 @@ namespace OutlookDomainMailOrganizer
             ProcessUnreadMessages(inboxFolder);
         }
 
-        private void btnOrganize_Click(object sender, RibbonControlEventArgs e)
+        private void btnOrganizeInbox_Click(object sender, RibbonControlEventArgs e)
         {
             ProcessUnreadMessages(inboxFolder);
+        }
+
+        private void chkChronoSort_Click(object sender, RibbonControlEventArgs e)
+        {
+            Properties.Settings.Default.ChronoSort = ChronoSortEnabled;
+            Properties.Settings.Default.Save();
         }
 
         #endregion
@@ -85,6 +102,8 @@ namespace OutlookDomainMailOrganizer
 
         private void InitializeAddIn()
         {
+            ChronoSortEnabled = Properties.Settings.Default.ChronoSort;
+
             inboxFolder = (Folder)Application.ActiveExplorer().Session.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
 
             bool domainRootExists = false;
@@ -209,8 +228,8 @@ namespace OutlookDomainMailOrganizer
 
         private void SortFoldersByChronology()
         {
-            if (!Globals.Ribbons.Ribbon1.enableChronoSort.Checked) return;
-
+            if (!ChronoSortEnabled) return;
+            
             var chronoDb = new SortedDictionary<DateTime, List<Folder>>();
 
             foreach (var folderName in domainsDb.Keys)

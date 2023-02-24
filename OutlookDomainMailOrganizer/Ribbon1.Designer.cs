@@ -34,10 +34,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             this.tab1 = this.Factory.CreateRibbonTab();
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
-            this.enableChronoSort = this.Factory.CreateRibbonCheckBox();
-            this.btnOrganize = this.Factory.CreateRibbonButton();
+            this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
+            this.btnOrganizeInbox = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
             this.SuspendLayout();
@@ -51,21 +52,26 @@
             // 
             // grpDomainMailOrganizer
             // 
-            this.grpDomainMailOrganizer.Items.Add(this.enableChronoSort);
-            this.grpDomainMailOrganizer.Items.Add(this.btnOrganize);
+            this.grpDomainMailOrganizer.Items.Add(this.chkChronoSort);
+            this.grpDomainMailOrganizer.Items.Add(this.btnOrganizeInbox);
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
             // 
-            // enableChronoSort
+            // chkChronoSort
             // 
-            this.enableChronoSort.Checked = true;
-            this.enableChronoSort.Label = "Move Newest to Top";
-            this.enableChronoSort.Name = "enableChronoSort";
+            this.chkChronoSort.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.chkChronoSort.Image = ((System.Drawing.Image)(resources.GetObject("chkChronoSort.Image")));
+            this.chkChronoSort.Label = "Newest to Top";
+            this.chkChronoSort.Name = "chkChronoSort";
+            this.chkChronoSort.ShowImage = true;
             // 
-            // btnOrganize
+            // btnOrganizeInbox
             // 
-            this.btnOrganize.Label = "Organize Now";
-            this.btnOrganize.Name = "btnOrganize";
+            this.btnOrganizeInbox.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnOrganizeInbox.Image = ((System.Drawing.Image)(resources.GetObject("btnOrganizeInbox.Image")));
+            this.btnOrganizeInbox.Label = "Organize Inbox";
+            this.btnOrganizeInbox.Name = "btnOrganizeInbox";
+            this.btnOrganizeInbox.ShowImage = true;
             // 
             // Ribbon1
             // 
@@ -85,8 +91,8 @@
 
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpDomainMailOrganizer;
-        internal Microsoft.Office.Tools.Ribbon.RibbonCheckBox enableChronoSort;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnOrganize;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnOrganizeInbox;
+        internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton chkChronoSort;
     }
 
     partial class ThisRibbonCollection
