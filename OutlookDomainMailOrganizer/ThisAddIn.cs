@@ -63,6 +63,8 @@ namespace OutlookDomainMailOrganizer
             ProcessUnreadMessages(inboxFolder);
             SortFoldersByChronology();
             SubscribeToEvents();
+
+            
         }
 
         private void ODMOAddIn_Shutdown(object sender, System.EventArgs e)
@@ -288,6 +290,8 @@ namespace OutlookDomainMailOrganizer
                 folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(i.ToString("X2")));
                 i--;
             }
+
+            if (i == 0) { SortFoldersByChronology(); }
         }
 
         #endregion
