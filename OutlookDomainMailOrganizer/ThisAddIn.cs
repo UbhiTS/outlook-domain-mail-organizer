@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using System.Threading;
+using OutlookDomainMailOrganizer;
+using Microsoft.Office.Tools.Ribbon;
 
 namespace OutlookDomainMailOrganizer
 {
@@ -21,15 +23,15 @@ namespace OutlookDomainMailOrganizer
     {
         #region Configuration Parameters
 
-        string domainRootFolder = "Customers";
+        string domainRootFolderName = "Customers";
 
         #endregion
 
         #region Private Members
 
         Dictionary<string, Folder> domainsDb;
-
-        bool altSortNumbering = false;
+        Folder inboxFolder = null;
+        Folder domainsFolder = null;
 
         #endregion
 
@@ -45,11 +47,10 @@ namespace OutlookDomainMailOrganizer
 
         private void ODMOAddIn_Startup(object sender, System.EventArgs e)
         {
+            InitializeAddIn();
             InitializeDomainsDatabase();
-
-            ProcessUnreadMessages();
-
-            this.Application.NewMail += new ApplicationEvents_11_NewMailEventHandler(ProcessUnreadMessages);
+            ProcessUnreadMessages(inboxFolder);
+            SubscribeToEvents();
         }
 
         private void ODMOAddIn_Shutdown(object sender, System.EventArgs e)
@@ -60,33 +61,61 @@ namespace OutlookDomainMailOrganizer
 
         #endregion
 
+        #region Event Handlers
+
+        private void SubscribeToEvents()
+        {
+            Application.NewMail += NewMail;
+            Globals.Ribbons.Ribbon1.btnOrganize.Click += btnOrganize_Click;
+        }
+
+        private void NewMail()
+        {
+            ProcessUnreadMessages(inboxFolder);
+        }
+
+        private void btnOrganize_Click(object sender, RibbonControlEventArgs e)
+        {
+            ProcessUnreadMessages(inboxFolder);
+        }
+
+        #endregion
+
         #region Private Methods
+
+        private void InitializeAddIn()
+        {
+            inboxFolder = (Folder)Application.ActiveExplorer().Session.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
+
+            bool domainRootExists = false;
+
+            foreach (Folder folder in inboxFolder.Parent.Folders)
+            {
+                if (folder.Name == domainRootFolderName)
+                {
+                    domainRootExists = true;
+                    break;
+                }
+            }
+
+            if (domainRootExists == false) inboxFolder.Parent.Folders.Add(domainRootFolderName);
+
+            domainsFolder = inboxFolder.Parent.Folders[domainRootFolderName];
+        }
 
         private void InitializeDomainsDatabase()
         {
             domainsDb = new Dictionary<string, Folder>();
-
-            var inbox = (MAPIFolder)this.Application.ActiveExplorer().Session.GetDefaultFolder(OlDefaultFolders.olFolderInbox);
-            var customers = inbox.Parent.Folders[domainRootFolder].Folders;
-
-            foreach (object customer in customers)
+            
+            foreach (dynamic folder in domainsFolder.Folders)
             {
-                var customerFolder = customer as Outlook.Folder;
-                var customerName = customerFolder.Name;
-
-                domainsDb.Add(customerName, customerFolder);
+                domainsDb.Add(folder.Name, folder);
             }
-
-
         }
 
-        private void ProcessUnreadMessages()
+        private void ProcessUnreadMessages(Folder folder)
         {
-            var inbox = (MAPIFolder)this.Application.ActiveExplorer().Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderInbox);
-            //var inbox = (MAPIFolder)this.Application.ActiveExplorer().Session.GetDefaultFolder(Outlook.OlDefaultFolders.olFolderSentMail);
-            var unreadItems = (Items)inbox.Items.Restrict("[Unread]=true");
-            //var unreadItems = (Items)inbox.Items;
-
+            var unreadItems = folder.Items.Restrict("[Unread]=true");
             var unreadItemsCount = unreadItems.Count;
 
             for (int i = unreadItemsCount; i > 0; i--)
@@ -175,11 +204,13 @@ namespace OutlookDomainMailOrganizer
                 Debug.WriteLine("");
             }
 
-            SortFoldersByChronology().Wait();
+            SortFoldersByChronology();
         }
 
-        private async Task SortFoldersByChronology()
+        private void SortFoldersByChronology()
         {
+            if (!Globals.Ribbons.Ribbon1.enableChronoSort.Checked) return;
+
             var chronoDb = new SortedDictionary<DateTime, List<Folder>>();
 
             foreach (var folderName in domainsDb.Keys)
@@ -203,18 +234,15 @@ namespace OutlookDomainMailOrganizer
                 else chronoDb.Add(DateTime.MinValue, new List<Folder>() { domainsDb[folderName] });
             }
 
-            var i = altSortNumbering ? 0 : 255; // this is eliminates two folders getting the same sort position which causes unexpected sort behavior
+            var i = 11;
 
-            foreach (var folders in altSortNumbering ? chronoDb.Reverse() : chronoDb)
+            foreach (var folders in chronoDb.Reverse())
             {
                 foreach (var folder in folders.Value)
                 {
-                    folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary((altSortNumbering ? i++ : i--).ToString("X2")));
-                    await Task.Delay(50); // without this delay, the folder sorting on the UI behaves unexpectedly as well :(
+                    folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(i++.ToString("X2")));
                 }
             }
-
-            altSortNumbering = !altSortNumbering;
         }
 
         #endregion
@@ -369,7 +397,7 @@ namespace OutlookDomainMailOrganizer
             this.Startup += new System.EventHandler(ODMOAddIn_Startup);
             this.Shutdown += new System.EventHandler(ODMOAddIn_Shutdown);
         }
-        
+
         #endregion
     }
 }
