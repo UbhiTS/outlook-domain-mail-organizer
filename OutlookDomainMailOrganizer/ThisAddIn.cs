@@ -134,9 +134,9 @@ namespace OutlookDomainMailOrganizer
         {
             domainsDb = new Dictionary<string, Folder>();
             
-            foreach (dynamic folder in domainsFolder.Folders)
+            foreach (Folder folder in domainsFolder.Folders)
             {
-                domainsDb.Add(folder.Name, folder);
+                domainsDb.Add(folder.Name.ToLower(), folder);
             }
         }
 
@@ -273,9 +273,8 @@ namespace OutlookDomainMailOrganizer
                 {
                     string currentPosition = null;
 
-                    try { currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION)); }
-                    catch { }
-                     
+                    try { currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION)); } catch { }
+
                     var newPosition = sortPositionCounter.ToString("X2");
 
                     if (currentPosition == null || currentPosition != newPosition)
@@ -355,10 +354,9 @@ namespace OutlookDomainMailOrganizer
             
             // https://learn.microsoft.com/en-us/office/client-developer/outlook/pia/how-to-get-the-e-mail-address-of-a-recipient
 
-            var pa = recipient.PropertyAccessor;
             string smtpAddress = null;
 
-            try { smtpAddress = pa.GetProperty(PR_SMTP_ADDRESS); }
+            try { smtpAddress = recipient.PropertyAccessor.GetProperty(PR_SMTP_ADDRESS); }
             catch (System.Exception ex) { Debug.Write(ex.Message); } // probably left the organization (unknown)
 
             return smtpAddress;
@@ -415,13 +413,11 @@ namespace OutlookDomainMailOrganizer
         {
             if (smtpAddress == null || smtpAddress == string.Empty) return null;
 
-            // Debug.Write(" " + smtpAddress);
-
             var smtpAddressArray = smtpAddress.Split('@');
 
             if (smtpAddressArray.Length == 2)
             {
-                var domain = smtpAddressArray[1];
+                var domain = smtpAddressArray[1].ToLower();
 
                 if (domainsDb.ContainsKey(domain))
                 {
@@ -438,7 +434,7 @@ namespace OutlookDomainMailOrganizer
 
             foreach (var domain in domainsDb.Keys)
             {
-                if (body.Contains(domain))
+                if (body.ToLower().Contains(domain))
                 {
                     return domain;
                 }
