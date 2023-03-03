@@ -3,9 +3,10 @@
 Outlook VSTO plugin to help you organize your mails if you are working with a lot of different customers
 
 The main motivation for this plugin were the following issues:
-- inbox filling up with noise, you are cc'd on a thread, and those mails land in your inbox 
+- inbox filling up with noise, you are cc'd on a thread, and those mails land in your inbox
+- creating and managing rules for each and every customer to land emails in specific folders
 - even after you create all the rules to move messages from a customer into a specific folder, if anyone else from your organization replies to the mail thread, it lands in your inbox. There is a repititive task of dragging and dropping these mails.
-- it's hard to keep a track of most active customers/requests. With this, the latest customer with a request automatically moves to the top
+- it's hard to keep a track of most active customers/requests. With this, the latest customer with a request automatically moves to the top of your list
 
 To use this:
 1. Download the code, compile it in Visual Studio (you need to have VSTO toolkit installed). and Start the project. This need to be done only once.
