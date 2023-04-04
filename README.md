@@ -4,20 +4,20 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
 
 ## Motivation
 1. Having a very **noisy inbox** and **missing important customer mails** due to promotions, trainings, dl groups etc.
-2. Creating and managing **rules** for each and every customer to land mails in specific folders
+2. **Creating and managing rules** for each and every customer to land mails in specific folders
 3. Reduce the repetitive task of dragging and dropping these specific mails that land in your inbox regardless of rules
-   - Someone else from your organization replies to the mail thread
-   - You are cc'd on an important thread
-4. Hard to keep a track of most active customers/requests.
-   - The latest customer with a request automatically moves to the top of your list
+   - **Someone else from your organization replies to the mail thread**
+   - **You are cc'd on a customer thread**
+4. Hard to **keep a track of most active customers/requests**.
+   - The latest customer with a request **automatically moves to the top of your list**
 
 ## How to install
 1. Download the code, compile it in Visual Studio (with VSTO development plugin)
-2. Start the project (steps 1 and 2 need to be done one time only)
+2. Start the project **(steps 1 and 2 need to be done one time only)**
 4. Once Outlook starts
-   -  Create a "Customers" folder in the mailbox root
+   -  Create a "Customers" folder in the **mailbox root**
    -  Create a subfolder for each of your Customer domains you wish to auto organize
-      e.g. if I work with these 4 companies, I will have my folder structure as follows
+   -  (e.g. if I work with these 4 companies, I will have my folder structure as follows)
 ```
       Inbox
       Outbox
@@ -33,17 +33,18 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
 4. Restart Outlook
 
 ## Experience
-
-When any new email arrives, all unread emails in the inbox will be evaluated and moved to matching folders. 
-Even if one of the recipients (to, cc) or the sender is of the domain @ebay.com, it will land in the ebay.com folder regardless of who sent that email and to whom.
+When a new mail arrives, **all unread emails** in the inbox will be evaluated and moved to matching folders. 
+Even **if one of the recipients (to, cc) or the sender** is of the domain @ebay.com, it will land in the ebay.com folder. This is useful when you are in the cc list.
 
 ## Caution
+If you have more than 20000 emails, it could take up to 15 to 30 minutes depending on your PC configuration. If you want to process only new emails, **ensure that you mark all existing mails in the inbox as read**.
 
-If you have more than 20000 emails, it could take up to 15 to 30 minutes depending on your PC configuration. If you want to process only new emails, ensure that you mark all existing mails in the inbox as read.
+If you have recipients from multiple companies, it would depend on the order of the recpients. **The first recipient that matches** any of the domains is the folder that email, or meeting, or appointment will go to. But normally that's not really a use case, is it :) ?
 
-If you have recipients from multiple companies, it would depend on the order of the recpients. The first recipient that matches any of the domains is the folder that email, or meeting, or appointment will go to. But normally that's not a use case :)
+This plugin is not ready for primetime and is not production ready so I do not claim any performance guarantees. In fact, you might have to reenable the plugin if outlook disables it citing performance. If you plugin disappears from your toolbar, you can reenable it via the following process -
+![image](https://user-images.githubusercontent.com/3799525/229865715-e3c7a756-664e-4e09-864c-47437c314dee.png)
+![image](https://user-images.githubusercontent.com/3799525/229867079-941f21b6-271a-463f-90bb-f322260778fa.png)
 
 # Thank you!
-
-Hopefully this would be useful to someone as much as it was valuable to me.
+Hopefully this is useful to you and help you keep your outlook organized. 
 Thanks for your time!
