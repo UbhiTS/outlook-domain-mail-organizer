@@ -42,7 +42,10 @@ If you have more than 20000 emails, it could take up to 15 to 30 minutes dependi
 If you have recipients from multiple companies, it would depend on the order of the recpients. **The first recipient that matches** any of the domains is the folder that email, or meeting, or appointment will go to. But normally that's not really a use case, is it :) ?
 
 This plugin is not ready for primetime and is not production ready so I do not claim any performance guarantees. In fact, you might have to reenable the plugin if outlook disables it citing performance. If you plugin disappears from your toolbar, you can reenable it via the following process -
-![image](https://user-images.githubusercontent.com/3799525/229865715-e3c7a756-664e-4e09-864c-47437c314dee.png)
+Go to File >
+![image](https://user-images.githubusercontent.com/3799525/229868171-575e6d09-9411-4577-8939-afb08db0db2f.png)
+
+Go to File > Options
 ![image](https://user-images.githubusercontent.com/3799525/229867079-941f21b6-271a-463f-90bb-f322260778fa.png)
 
 # Thank you!
