@@ -51,6 +51,9 @@ Go to File > Options
 
 ![image](https://user-images.githubusercontent.com/3799525/229867079-941f21b6-271a-463f-90bb-f322260778fa.png)
 
+## Future Roadmap
+- Organize mails based on keywords
+
 # Thank you!
 Hopefully this is useful to you and helps you keep your outlook organized. Thanks for your time.
 Cheers!
