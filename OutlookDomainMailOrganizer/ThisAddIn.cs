@@ -13,6 +13,7 @@ namespace OutlookDomainMailOrganizer
         string domainsFolderName = "Customers";
 
         private readonly object _lockObject = new object();
+        System.Threading.Thread t = null;
 
         #endregion
 
@@ -53,19 +54,23 @@ namespace OutlookDomainMailOrganizer
 
         private void btnRefresh_Click(object sender, RibbonControlEventArgs e)
         {
+            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+
             organizerLogic = null;
         }
 
         private void chkChronoSort_Click(object sender, RibbonControlEventArgs e)
         {
+            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+
             organizerLogic = null;
         }
 
         private void btnOrganizeInbox_Click(object sender, RibbonControlEventArgs e)
         {
-            InitializeOrganizerLogic();
+            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
 
-            System.Threading.Thread t = null;
+            InitializeOrganizerLogic();
 
             switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
             {
@@ -89,9 +94,9 @@ namespace OutlookDomainMailOrganizer
 
         private void btnOrganizeArchive_Click(object sender, RibbonControlEventArgs e)
         {
-            InitializeOrganizerLogic();
+            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
 
-            System.Threading.Thread t = null;
+            InitializeOrganizerLogic();
 
             switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
             {
@@ -115,9 +120,11 @@ namespace OutlookDomainMailOrganizer
 
         private void NewMail()
         {
+            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+
             InitializeOrganizerLogic();
 
-            System.Threading.Thread t = new System.Threading.Thread(organizerLogic.ProcessInboxUnread);
+            t = new System.Threading.Thread(organizerLogic.ProcessInboxUnread);
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
         }
@@ -135,14 +142,14 @@ namespace OutlookDomainMailOrganizer
                         Globals.Ribbons.Ribbon1.chkChronoSort.Checked
                     );
 
-                    organizerLogic.StatusUpdate += OrganizerLogic_StatusUpdate;
+                    organizerLogic.MessagesRemainingEventHandler += OrganizerLogic_MessagesRemainingEvent;
                 }
             }
         }
 
-        private void OrganizerLogic_StatusUpdate(string statusUpdate)
+        private void OrganizerLogic_MessagesRemainingEvent(int messagesRemaining)
         {
-            Globals.Ribbons.Ribbon1.btnProcessingQueue.Label = statusUpdate;
+            Globals.Ribbons.Ribbon1.btnProcessingQueue.Label = messagesRemaining.ToString();
         }
 
         #endregion

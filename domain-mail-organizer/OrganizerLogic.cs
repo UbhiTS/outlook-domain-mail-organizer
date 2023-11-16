@@ -11,8 +11,8 @@ namespace DomainMailOrganizer
     {
         #region Events
 
-        public delegate void StatusEventHandler(string statusUpdate);
-        public event StatusEventHandler StatusUpdate;
+        public delegate void MessagesRemainingEvent(int messagesRemaining);
+        public event MessagesRemainingEvent MessagesRemainingEventHandler;
 
         #endregion
 
@@ -37,7 +37,6 @@ namespace DomainMailOrganizer
         bool domainsInitialized = false;
         bool folderSortInitialized = false;
         int folderSortPositionCtr;
-        bool processing = false;
 
         #endregion
 
@@ -63,25 +62,25 @@ namespace DomainMailOrganizer
 
         public void ProcessInboxUnread()
         {
-            string filter = "[Unread] = True And [ReceivedTime] > '" + DateTime.Now.AddHours(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[Unread] = True And [ReceivedTime] > '" + DateTime.Now.AddHours(-1).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
         public void ProcessInbox1Day()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
         public void ProcessInbox7Day()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
         public void ProcessInbox30Day()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
@@ -92,19 +91,19 @@ namespace DomainMailOrganizer
 
         public void ProcessArchive1Day()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxArchiveFolder, filter);
         }
 
         public void ProcessArchive7Day()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxArchiveFolder, filter);
         }
 
         public void ProcessArchive30Day()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxArchiveFolder, filter);
         }
 
@@ -171,10 +170,6 @@ namespace DomainMailOrganizer
 
         private void ProcessMessages(Folder folder, string filter)
         {
-            if (processing) return;
-            
-            processing = true;
-
             if (domainsInitialized == false)
             {
                 InitializeDomainsDatabase();
@@ -294,10 +289,8 @@ namespace DomainMailOrganizer
 
                 Debug.WriteLine("");
 
-                StatusUpdate?.Invoke((i-1).ToString());
+                MessagesRemainingEventHandler?.Invoke(i-1);
             }
-
-            processing = false;
         }
 
         private void SortFoldersByChronology()
