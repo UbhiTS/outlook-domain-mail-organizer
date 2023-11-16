@@ -58,7 +58,7 @@ namespace DomainMailOrganizer
 
         public void ProcessInbox24Hours()
         {
-            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
@@ -134,6 +134,7 @@ namespace DomainMailOrganizer
                             var mail = message as MailItem;
                             var matchedDomain = GetDomainFromMailSender(mail)
                                 ?? GetDomainFromFirstMatchedRecipient(mail.Recipients)
+                                ?? GetDomainFromSubject(mail.Subject)
                                 ?? GetDomainFromBody(mail.Body);
 
                             if (matchedDomain != null)
@@ -156,6 +157,7 @@ namespace DomainMailOrganizer
 
                             var matchedDomain = GetDomainFromAddressEntry(organizer)
                                 ?? GetDomainFromFirstMatchedRecipient(appt.Recipients)
+                                ?? GetDomainFromSubject(appt.Subject)
                                 ?? GetDomainFromBody(appt.Body);
 
                             if (matchedDomain != null)
@@ -176,6 +178,7 @@ namespace DomainMailOrganizer
                             var meeting = message as MeetingItem;
                             var matchedDomain = GetDomainFromMeetingOrganizer(meeting)
                                 ?? GetDomainFromFirstMatchedRecipient(meeting.Recipients)
+                                ?? GetDomainFromSubject(meeting.Subject)
                                 ?? GetDomainFromBody(meeting.Body);
 
                             if (matchedDomain != null)
@@ -401,13 +404,28 @@ namespace DomainMailOrganizer
             return null;
         }
 
-        private string GetDomainFromBody(string body)
+        private string GetDomainFromSubject(string subject)
         {
-            if (body == null || body.Length <= 4) return null;
+            if (subject == null || subject.Length == 0) return null;
 
             foreach (var domain in domainsDb.Keys)
             {
-                if (body.ToLower().Contains(domain))
+                if (subject.ToLower().Contains(domain.Split('.')[0]))
+                {
+                    return domain;
+                }
+            }
+
+            return null;
+        }
+
+        private string GetDomainFromBody(string body)
+        {
+            if (body == null || body.Length == 0) return null;
+
+            foreach (var domain in domainsDb.Keys)
+            {
+                if (body.ToLower().Contains(domain.Split('.')[0]))
                 {
                     return domain;
                 }
