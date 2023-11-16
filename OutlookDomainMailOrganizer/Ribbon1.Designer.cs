@@ -39,6 +39,7 @@
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
             this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
             this.btnOrganizeInbox = this.Factory.CreateRibbonButton();
+            this.btnOrganizeArchive = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
             this.SuspendLayout();
@@ -54,6 +55,7 @@
             // 
             this.grpDomainMailOrganizer.Items.Add(this.chkChronoSort);
             this.grpDomainMailOrganizer.Items.Add(this.btnOrganizeInbox);
+            this.grpDomainMailOrganizer.Items.Add(this.btnOrganizeArchive);
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
             // 
@@ -69,9 +71,19 @@
             // 
             this.btnOrganizeInbox.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnOrganizeInbox.Image = ((System.Drawing.Image)(resources.GetObject("btnOrganizeInbox.Image")));
-            this.btnOrganizeInbox.Label = "Organize Inbox";
+            this.btnOrganizeInbox.Label = "Inbox";
             this.btnOrganizeInbox.Name = "btnOrganizeInbox";
             this.btnOrganizeInbox.ShowImage = true;
+            this.btnOrganizeInbox.SuperTip = "(24 hours)";
+            // 
+            // btnOrganizeArchive
+            // 
+            this.btnOrganizeArchive.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnOrganizeArchive.Image = ((System.Drawing.Image)(resources.GetObject("btnOrganizeArchive.Image")));
+            this.btnOrganizeArchive.Label = "Archive";
+            this.btnOrganizeArchive.Name = "btnOrganizeArchive";
+            this.btnOrganizeArchive.ShowImage = true;
+            this.btnOrganizeArchive.SuperTip = "(30 days)";
             // 
             // Ribbon1
             // 
@@ -93,6 +105,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup grpDomainMailOrganizer;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnOrganizeInbox;
         internal Microsoft.Office.Tools.Ribbon.RibbonToggleButton chkChronoSort;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnOrganizeArchive;
     }
 
     partial class ThisRibbonCollection
