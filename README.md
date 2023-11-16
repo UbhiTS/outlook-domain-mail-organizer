@@ -37,7 +37,7 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
 When a new mail arrives, **all unread emails** in the inbox will be evaluated and moved to matching folders. 
 Even **if one of the recipients (to, cc) or the sender** is of the domain @ebay.com, it will land in the ebay.com folder. This is useful when you are in the cc list.
 
-## Caution
+## Caution (update > almost fixed with background tasks on STA threads)
 If you have more than 20000 emails, it could take up to 15 to 30 minutes depending on your PC configuration. If you want to process only new emails, **ensure that you mark all existing mails in the inbox as read**.
 
 If you have recipients from multiple companies, it would depend on the order of the recpients. **The first recipient that matches** any of the domains is the folder that email, or meeting, or appointment will go to. But normally that's not really a use case, is it :) ?
