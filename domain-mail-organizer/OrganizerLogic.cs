@@ -37,6 +37,7 @@ namespace DomainMailOrganizer
         bool domainsInitialized = false;
         bool folderSortInitialized = false;
         int folderSortPositionCtr;
+        bool processing = false;
 
         #endregion
 
@@ -170,6 +171,10 @@ namespace DomainMailOrganizer
 
         private void ProcessMessages(Folder folder, string filter)
         {
+            if (processing) return;
+            
+            processing = true;
+
             if (domainsInitialized == false)
             {
                 InitializeDomainsDatabase();
@@ -291,6 +296,8 @@ namespace DomainMailOrganizer
 
                 StatusUpdate?.Invoke((i-1).ToString());
             }
+
+            processing = false;
         }
 
         private void SortFoldersByChronology()

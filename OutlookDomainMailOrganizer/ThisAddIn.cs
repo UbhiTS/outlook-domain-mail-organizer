@@ -12,6 +12,8 @@ namespace OutlookDomainMailOrganizer
         string inboxArchiveFolderName = "Inbox-Archive";
         string domainsFolderName = "Customers";
 
+        private readonly object _lockObject = new object();
+
         #endregion
 
         #region Properties
@@ -45,7 +47,6 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.chkChronoSort.Click += chkChronoSort_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
-            
 
             Application.NewMail += NewMail;
         }
@@ -123,16 +124,19 @@ namespace OutlookDomainMailOrganizer
 
         private void InitializeOrganizerLogic()
         {
-            if (organizerLogic == null)
+            lock (_lockObject)
             {
-                organizerLogic = new DomainMailOrganizer.OrganizerLogic(
-                    Application, 
-                    domainsFolderName, 
-                    inboxArchiveFolderName, 
-                    Globals.Ribbons.Ribbon1.chkChronoSort.Checked
-                );
+                if (organizerLogic == null)
+                {
+                    organizerLogic = new DomainMailOrganizer.OrganizerLogic(
+                        Application,
+                        domainsFolderName,
+                        inboxArchiveFolderName,
+                        Globals.Ribbons.Ribbon1.chkChronoSort.Checked
+                    );
 
-                organizerLogic.StatusUpdate += OrganizerLogic_StatusUpdate;
+                    organizerLogic.StatusUpdate += OrganizerLogic_StatusUpdate;
+                }
             }
         }
 

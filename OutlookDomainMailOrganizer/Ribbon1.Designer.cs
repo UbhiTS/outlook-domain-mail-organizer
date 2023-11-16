@@ -34,13 +34,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl1 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl2 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl3 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl4 = this.Factory.CreateRibbonDropDownItem();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             this.tab1 = this.Factory.CreateRibbonTab();
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
+            this.btnRefresh = this.Factory.CreateRibbonButton();
+            this.separator4 = this.Factory.CreateRibbonSeparator();
             this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
             this.separator3 = this.Factory.CreateRibbonSeparator();
             this.box2 = this.Factory.CreateRibbonBox();
@@ -50,8 +52,6 @@
             this.btnOrganizeArchive = this.Factory.CreateRibbonButton();
             this.separator1 = this.Factory.CreateRibbonSeparator();
             this.btnProcessingQueue = this.Factory.CreateRibbonButton();
-            this.btnRefresh = this.Factory.CreateRibbonButton();
-            this.separator4 = this.Factory.CreateRibbonSeparator();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
             this.box2.SuspendLayout();
@@ -78,6 +78,18 @@
             this.grpDomainMailOrganizer.Items.Add(this.btnProcessingQueue);
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
+            this.btnRefresh.Label = "Reload Config";
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.ShowImage = true;
+            // 
+            // separator4
+            // 
+            this.separator4.Name = "separator4";
             // 
             // chkChronoSort
             // 
@@ -125,7 +137,7 @@
             // 
             this.btnOrganizeInbox.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnOrganizeInbox.Image = ((System.Drawing.Image)(resources.GetObject("btnOrganizeInbox.Image")));
-            this.btnOrganizeInbox.Label = "Inbox";
+            this.btnOrganizeInbox.Label = "Process Inbox";
             this.btnOrganizeInbox.Name = "btnOrganizeInbox";
             this.btnOrganizeInbox.ShowImage = true;
             this.btnOrganizeInbox.SuperTip = "(24 hours)";
@@ -134,7 +146,7 @@
             // 
             this.btnOrganizeArchive.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
             this.btnOrganizeArchive.Image = ((System.Drawing.Image)(resources.GetObject("btnOrganizeArchive.Image")));
-            this.btnOrganizeArchive.Label = "Archive";
+            this.btnOrganizeArchive.Label = "Process Archive";
             this.btnOrganizeArchive.Name = "btnOrganizeArchive";
             this.btnOrganizeArchive.ShowImage = true;
             this.btnOrganizeArchive.SuperTip = "(30 days)";
@@ -150,18 +162,6 @@
             this.btnProcessingQueue.Label = "0";
             this.btnProcessingQueue.Name = "btnProcessingQueue";
             this.btnProcessingQueue.ShowImage = true;
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
-            this.btnRefresh.Label = "Reload Configuration";
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.ShowImage = true;
-            // 
-            // separator4
-            // 
-            this.separator4.Name = "separator4";
             // 
             // Ribbon1
             // 
