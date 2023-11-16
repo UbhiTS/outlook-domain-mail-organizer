@@ -34,21 +34,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl1 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl2 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl3 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl4 = this.Factory.CreateRibbonDropDownItem();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             this.tab1 = this.Factory.CreateRibbonTab();
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
-            this.ddDays = this.Factory.CreateRibbonDropDown();
             this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
+            this.separator3 = this.Factory.CreateRibbonSeparator();
+            this.box2 = this.Factory.CreateRibbonBox();
+            this.ddDays = this.Factory.CreateRibbonDropDown();
+            this.separator2 = this.Factory.CreateRibbonSeparator();
             this.btnOrganizeInbox = this.Factory.CreateRibbonButton();
             this.btnOrganizeArchive = this.Factory.CreateRibbonButton();
             this.separator1 = this.Factory.CreateRibbonSeparator();
-            this.separator2 = this.Factory.CreateRibbonSeparator();
-            this.separator3 = this.Factory.CreateRibbonSeparator();
-            this.box2 = this.Factory.CreateRibbonBox();
             this.btnProcessingQueue = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
@@ -75,6 +75,24 @@
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
             // 
+            // chkChronoSort
+            // 
+            this.chkChronoSort.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.chkChronoSort.Image = ((System.Drawing.Image)(resources.GetObject("chkChronoSort.Image")));
+            this.chkChronoSort.Label = "Newest to Top";
+            this.chkChronoSort.Name = "chkChronoSort";
+            this.chkChronoSort.ShowImage = true;
+            // 
+            // separator3
+            // 
+            this.separator3.Name = "separator3";
+            // 
+            // box2
+            // 
+            this.box2.BoxStyle = Microsoft.Office.Tools.Ribbon.RibbonBoxStyle.Vertical;
+            this.box2.Items.Add(this.ddDays);
+            this.box2.Name = "box2";
+            // 
             // ddDays
             // 
             this.ddDays.Image = ((System.Drawing.Image)(resources.GetObject("ddDays.Image")));
@@ -95,13 +113,9 @@
             this.ddDays.ShowImage = true;
             this.ddDays.ShowLabel = false;
             // 
-            // chkChronoSort
+            // separator2
             // 
-            this.chkChronoSort.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.chkChronoSort.Image = ((System.Drawing.Image)(resources.GetObject("chkChronoSort.Image")));
-            this.chkChronoSort.Label = "Newest to Top";
-            this.chkChronoSort.Name = "chkChronoSort";
-            this.chkChronoSort.ShowImage = true;
+            this.separator2.Name = "separator2";
             // 
             // btnOrganizeInbox
             // 
@@ -124,20 +138,6 @@
             // separator1
             // 
             this.separator1.Name = "separator1";
-            // 
-            // separator2
-            // 
-            this.separator2.Name = "separator2";
-            // 
-            // separator3
-            // 
-            this.separator3.Name = "separator3";
-            // 
-            // box2
-            // 
-            this.box2.BoxStyle = Microsoft.Office.Tools.Ribbon.RibbonBoxStyle.Vertical;
-            this.box2.Items.Add(this.ddDays);
-            this.box2.Name = "box2";
             // 
             // btnProcessingQueue
             // 

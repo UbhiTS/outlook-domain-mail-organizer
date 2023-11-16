@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Xml.Linq;
 using Microsoft.Office.Interop.Outlook;
 
 namespace DomainMailOrganizer
@@ -30,6 +32,8 @@ namespace DomainMailOrganizer
         Folder domainsFolder = null;
 
         Dictionary<string, Folder> domainsDb;
+        Dictionary<string, Folder> keywordsDb;
+
         int sortPositionCounter;
 
         #endregion
@@ -59,7 +63,7 @@ namespace DomainMailOrganizer
 
         public void ProcessInboxUnread()
         {
-            string filter = "[Unread]=true And [ReceivedTime] > '" + DateTime.Now.AddHours(-2).ToString("MM/dd/yyyy HH:mm") + "'";
+            string filter = "[Unread] = True And [ReceivedTime] > '" + DateTime.Now.AddHours(-1).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
@@ -136,10 +140,32 @@ namespace DomainMailOrganizer
         private void InitializeDomainsDatabase()
         {
             domainsDb = new Dictionary<string, Folder>();
+            keywordsDb = new Dictionary<string, Folder>();
 
             foreach (Folder folder in domainsFolder.Folders)
             {
                 domainsDb.Add(folder.Name.ToLower(), folder);
+
+                if (folder.Description != null && folder.Description == string.Empty)
+                {
+                    var keywords = folder.Description.ToLower()
+                        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                        .Select(keyword => keyword.Trim())
+                        .ToArray();
+
+
+                    foreach (var keyword in keywords)
+                    {
+                        if (!keywordsDb.ContainsKey(keyword))
+                        {
+                            keywordsDb.Add(keyword.Trim(), folder);
+                        }
+                        else
+                        {
+                            // TODO: update error status on ribbon for duplicate keyword found; 
+                        }
+                    }
+                }
             }
         }
 
@@ -451,11 +477,21 @@ namespace DomainMailOrganizer
         {
             if (subject == null || subject.Length == 0) return null;
 
+            subject = subject.ToLower();
+
             foreach (var domain in domainsDb.Keys)
             {
-                if (subject.ToLower().Contains(domain))
+                if (subject.Contains(domain))
                 {
                     return domain;
+                }
+            }
+
+            foreach (var keyword in keywordsDb.Keys)
+            {
+                if (subject.Contains(keyword))
+                {
+                    return keywordsDb[keyword].Name;
                 }
             }
 
@@ -466,11 +502,21 @@ namespace DomainMailOrganizer
         {
             if (body == null || body.Length == 0) return null;
 
+            body = body.ToLower();
+
             foreach (var domain in domainsDb.Keys)
             {
-                if (body.ToLower().Contains(domain))
+                if (body.Contains(domain))
                 {
                     return domain;
+                }
+            }
+
+            foreach (var keyword in keywordsDb.Keys)
+            {
+                if (body.Contains(keyword))
+                {
+                    return keywordsDb[keyword].Name;
                 }
             }
 

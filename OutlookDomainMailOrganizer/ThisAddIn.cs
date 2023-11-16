@@ -59,20 +59,20 @@ namespace OutlookDomainMailOrganizer
 
             System.Threading.Thread t = null;
 
-            if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 1) {
-                t = new System.Threading.Thread(organizerLogic.ProcessInbox1Day);
-            }
-            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 7)
+            switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
             {
-                t = new System.Threading.Thread(organizerLogic.ProcessInbox7Day);
-            }
-            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 30)
-            {
-                t = new System.Threading.Thread(organizerLogic.ProcessInbox30Day);
-            }
-            else
-            {
-                t = new System.Threading.Thread(organizerLogic.ProcessInboxAll);
+                case 1:
+                    t = new System.Threading.Thread(organizerLogic.ProcessInbox1Day);
+                    break;
+                case 7:
+                    t = new System.Threading.Thread(organizerLogic.ProcessInbox7Day);
+                    break;
+                case 30:
+                    t = new System.Threading.Thread(organizerLogic.ProcessInbox30Day);
+                    break;
+                default:
+                    t = new System.Threading.Thread(organizerLogic.ProcessInboxAll);
+                    break;
             }
 
             t.SetApartmentState(System.Threading.ApartmentState.STA);
@@ -85,21 +85,20 @@ namespace OutlookDomainMailOrganizer
 
             System.Threading.Thread t = null;
 
-            if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 1)
+            switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
             {
-                t = new System.Threading.Thread(organizerLogic.ProcessArchive1Day);
-            }
-            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 7)
-            {
-                t = new System.Threading.Thread(organizerLogic.ProcessArchive7Day);
-            }
-            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 30)
-            {
-                t = new System.Threading.Thread(organizerLogic.ProcessArchive30Day);
-            }
-            else
-            {
-                t = new System.Threading.Thread(organizerLogic.ProcessArchiveAll);
+                case 1:
+                    t = new System.Threading.Thread(organizerLogic.ProcessArchive1Day);
+                    break;
+                case 7:
+                    t = new System.Threading.Thread(organizerLogic.ProcessArchive7Day);
+                    break;
+                case 30:
+                    t = new System.Threading.Thread(organizerLogic.ProcessArchive30Day);
+                    break;
+                default:
+                    t = new System.Threading.Thread(organizerLogic.ProcessArchiveAll);
+                    break;
             }
 
             t.SetApartmentState(System.Threading.ApartmentState.STA);
