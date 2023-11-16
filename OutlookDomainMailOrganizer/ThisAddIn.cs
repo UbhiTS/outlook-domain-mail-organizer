@@ -1,6 +1,7 @@
 ﻿using System.Windows.Forms;
 using Microsoft.Office.Tools.Ribbon;
 using Microsoft.Office.Interop.Outlook;
+using System;
 
 namespace OutlookDomainMailOrganizer
 {
@@ -56,7 +57,24 @@ namespace OutlookDomainMailOrganizer
         {
             InitializeOrganizerLogic();
 
-            System.Threading.Thread t = new System.Threading.Thread(organizerLogic.ProcessInbox24Hours);
+            System.Threading.Thread t = null;
+
+            if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 1) {
+                t = new System.Threading.Thread(organizerLogic.ProcessInbox1Day);
+            }
+            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 7)
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessInbox7Day);
+            }
+            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 30)
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessInbox30Day);
+            }
+            else
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessInboxAll);
+            }
+
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
         }
@@ -65,7 +83,25 @@ namespace OutlookDomainMailOrganizer
         {
             InitializeOrganizerLogic();
 
-            System.Threading.Thread t = new System.Threading.Thread(organizerLogic.ProcessArchive30Days);
+            System.Threading.Thread t = null;
+
+            if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 1)
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessArchive1Day);
+            }
+            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 7)
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessArchive7Day);
+            }
+            else if (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()) == 30)
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessArchive30Day);
+            }
+            else
+            {
+                t = new System.Threading.Thread(organizerLogic.ProcessArchiveAll);
+            }
+
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
         }
@@ -89,7 +125,14 @@ namespace OutlookDomainMailOrganizer
                     inboxArchiveFolderName, 
                     Globals.Ribbons.Ribbon1.chkChronoSort.Checked
                 );
+
+                organizerLogic.StatusUpdate += OrganizerLogic_StatusUpdate;
             }
+        }
+
+        private void OrganizerLogic_StatusUpdate(string statusUpdate)
+        {
+            Globals.Ribbons.Ribbon1.btnProcessingQueue.Label = statusUpdate;
         }
 
         #endregion

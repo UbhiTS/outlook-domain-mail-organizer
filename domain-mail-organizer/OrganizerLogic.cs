@@ -7,6 +7,13 @@ namespace DomainMailOrganizer
 {
     public class OrganizerLogic
     {
+        #region Events
+
+        public delegate void StatusEventHandler(string statusUpdate);
+        public event StatusEventHandler StatusUpdate;
+
+        #endregion
+
         #region Constants
 
         const string PR_SMTP_ADDRESS = @"http://schemas.microsoft.com/mapi/proptag/0x39FE001E";
@@ -52,20 +59,54 @@ namespace DomainMailOrganizer
 
         public void ProcessInboxUnread()
         {
-            string filter = "[Unread]=true And [ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            string filter = "[Unread]=true And [ReceivedTime] > '" + DateTime.Now.AddHours(-2).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
-        public void ProcessInbox24Hours()
+        public void ProcessInbox1Day()
+        {
+            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            ProcessMessages(inboxFolder, filter);
+        }
+
+        public void ProcessInbox7Day()
         {
             string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
-        public void ProcessArchive30Days()
+        public void ProcessInbox30Day()
+        {
+            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
+            ProcessMessages(inboxFolder, filter);
+        }
+
+        public void ProcessInboxAll()
+        {
+            ProcessMessages(inboxFolder, null);
+        }
+
+        public void ProcessArchive1Day()
+        {
+            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            ProcessMessages(inboxArchiveFolder, filter);
+        }
+
+        public void ProcessArchive7Day()
+        {
+            string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
+            ProcessMessages(inboxArchiveFolder, filter);
+        }
+
+        public void ProcessArchive30Day()
         {
             string filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxArchiveFolder, filter);
+        }
+
+        public void ProcessArchiveAll()
+        {
+            ProcessMessages(inboxArchiveFolder, null);
         }
 
         #endregion
@@ -210,6 +251,8 @@ namespace DomainMailOrganizer
                 }
 
                 Debug.WriteLine("");
+
+                StatusUpdate?.Invoke((i-1).ToString());
             }
         }
 
