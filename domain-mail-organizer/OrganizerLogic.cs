@@ -410,7 +410,7 @@ namespace DomainMailOrganizer
 
             foreach (var domain in domainsDb.Keys)
             {
-                if (subject.ToLower().Contains(domain.Split('.')[0]))
+                if (subject.ToLower().Contains(domain))
                 {
                     return domain;
                 }
@@ -425,7 +425,7 @@ namespace DomainMailOrganizer
 
             foreach (var domain in domainsDb.Keys)
             {
-                if (body.ToLower().Contains(domain.Split('.')[0]))
+                if (body.ToLower().Contains(domain))
                 {
                     return domain;
                 }
