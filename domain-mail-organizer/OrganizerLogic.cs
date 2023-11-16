@@ -34,7 +34,9 @@ namespace DomainMailOrganizer
         Dictionary<string, Folder> domainsDb;
         Dictionary<string, Folder> keywordsDb;
 
-        int sortPositionCounter;
+        bool domainsInitialized = false;
+        bool folderSortInitialized = false;
+        int folderSortPositionCtr;
 
         #endregion
 
@@ -52,9 +54,6 @@ namespace DomainMailOrganizer
             domainsFolder = GetOutlookFolder(domainsFolderName);
             inboxArchiveFolder = GetOutlookFolder(inboxArchiveFolderName);
             this.chronoSortEnabled = chronoSortEnabled;
-
-            InitializeDomainsDatabase();
-            SortFoldersByChronology();
         }
 
         #endregion
@@ -146,7 +145,7 @@ namespace DomainMailOrganizer
             {
                 domainsDb.Add(folder.Name.ToLower(), folder);
 
-                if (folder.Description != null && folder.Description == string.Empty)
+                if (folder.Description != null && folder.Description != string.Empty)
                 {
                     var keywords = folder.Description.ToLower()
                         .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
@@ -171,6 +170,18 @@ namespace DomainMailOrganizer
 
         private void ProcessMessages(Folder folder, string filter)
         {
+            if (domainsInitialized == false)
+            {
+                InitializeDomainsDatabase();
+                domainsInitialized = true;
+            }
+            
+            if (folderSortInitialized == false)
+            {
+                SortFoldersByChronology();
+                folderSortInitialized = true;
+            }
+
             Items items = null;
 
             if (filter == null || filter == string.Empty)
@@ -309,7 +320,7 @@ namespace DomainMailOrganizer
                 else chronoDb.Add(DateTime.MinValue, new List<Folder>() { domainsDb[folderName] });
             }
 
-            sortPositionCounter = 255;
+            folderSortPositionCtr = 255;
 
             foreach (var folders in chronoDb)
             {
@@ -319,14 +330,14 @@ namespace DomainMailOrganizer
 
                     try { currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION)); } catch { }
 
-                    var newPosition = sortPositionCounter.ToString("X2");
+                    var newPosition = folderSortPositionCtr.ToString("X2");
 
                     if (currentPosition == null || currentPosition != newPosition)
                     {
                         folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(newPosition));
                     }
 
-                    sortPositionCounter--;
+                    folderSortPositionCtr--;
                 }
             }
         }
@@ -336,15 +347,15 @@ namespace DomainMailOrganizer
             if (!chronoSortEnabled) return;
 
             var currentPosition = folder.PropertyAccessor.BinaryToString(folder.PropertyAccessor.GetProperty(PR_SORT_POSITION));
-            var topPosition = (sortPositionCounter + 1).ToString("X2");
+            var topPosition = (folderSortPositionCtr + 1).ToString("X2");
 
             if (currentPosition != topPosition)
             {
-                folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(sortPositionCounter.ToString("X2")));
-                sortPositionCounter--;
+                folder.PropertyAccessor.SetProperty(PR_SORT_POSITION, folder.PropertyAccessor.StringToBinary(folderSortPositionCtr.ToString("X2")));
+                folderSortPositionCtr--;
             }
 
-            if (sortPositionCounter == 0)
+            if (folderSortPositionCtr == 0)
             {
                 SortFoldersByChronology();
                 //MessageBox.Show("Please restart Outlook to restore the chronological folder sorting.", "Add-In: Domain Mail Organizer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

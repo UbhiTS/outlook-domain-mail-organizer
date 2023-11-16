@@ -41,11 +41,18 @@ namespace OutlookDomainMailOrganizer
 
         private void SubscribeToEvents()
         {
+            Globals.Ribbons.Ribbon1.btnRefresh.Click += btnRefresh_Click;
             Globals.Ribbons.Ribbon1.chkChronoSort.Click += chkChronoSort_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
             
+
             Application.NewMail += NewMail;
+        }
+
+        private void btnRefresh_Click(object sender, RibbonControlEventArgs e)
+        {
+            organizerLogic = null;
         }
 
         private void chkChronoSort_Click(object sender, RibbonControlEventArgs e)

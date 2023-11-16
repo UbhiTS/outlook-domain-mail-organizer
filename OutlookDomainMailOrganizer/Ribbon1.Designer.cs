@@ -34,11 +34,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl1 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl2 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl3 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl4 = this.Factory.CreateRibbonDropDownItem();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ribbon1));
             this.tab1 = this.Factory.CreateRibbonTab();
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
             this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
@@ -50,6 +50,8 @@
             this.btnOrganizeArchive = this.Factory.CreateRibbonButton();
             this.separator1 = this.Factory.CreateRibbonSeparator();
             this.btnProcessingQueue = this.Factory.CreateRibbonButton();
+            this.btnRefresh = this.Factory.CreateRibbonButton();
+            this.separator4 = this.Factory.CreateRibbonSeparator();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
             this.box2.SuspendLayout();
@@ -64,6 +66,8 @@
             // 
             // grpDomainMailOrganizer
             // 
+            this.grpDomainMailOrganizer.Items.Add(this.btnRefresh);
+            this.grpDomainMailOrganizer.Items.Add(this.separator4);
             this.grpDomainMailOrganizer.Items.Add(this.chkChronoSort);
             this.grpDomainMailOrganizer.Items.Add(this.separator3);
             this.grpDomainMailOrganizer.Items.Add(this.box2);
@@ -147,6 +151,18 @@
             this.btnProcessingQueue.Name = "btnProcessingQueue";
             this.btnProcessingQueue.ShowImage = true;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
+            this.btnRefresh.Label = "Reload Configuration";
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.ShowImage = true;
+            // 
+            // separator4
+            // 
+            this.separator4.Name = "separator4";
+            // 
             // Ribbon1
             // 
             this.Name = "Ribbon1";
@@ -176,6 +192,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonBox box2;
         internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnProcessingQueue;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnRefresh;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator4;
     }
 
     partial class ThisRibbonCollection
