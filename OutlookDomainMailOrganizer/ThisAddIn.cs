@@ -7,19 +7,10 @@ namespace OutlookDomainMailOrganizer
 {
     public partial class ThisAddIn
     {
-        #region Configuration Parameters
+        #region Config Parameters
 
-        string inboxArchiveFolderName = "Inbox-Archive";
         string domainsFolderName = "Customers";
-
-        private readonly object _lockObject = new object();
-        System.Threading.Thread t = null;
-
-        #endregion
-
-        #region Properties
-
-        DomainMailOrganizer.OrganizerLogic organizerLogic = null;
+        string archiveFolderName = "Inbox-Archive";
 
         #endregion
 
@@ -29,7 +20,7 @@ namespace OutlookDomainMailOrganizer
         {
             Globals.Ribbons.Ribbon1.chkChronoSort.Checked = true;
 
-            SubscribeToEvents();
+            InitPlugin();
         }
 
         private void ODMOAddIn_Shutdown(object sender, System.EventArgs e)
@@ -40,11 +31,12 @@ namespace OutlookDomainMailOrganizer
 
         #endregion
 
-        #region Event Handlers
+        #region Constructors and Initializers
 
-        private void SubscribeToEvents()
+        private void InitPlugin()
         {
-            Globals.Ribbons.Ribbon1.btnRefresh.Click += btnRefresh_Click;
+            //Globals.Ribbons.Ribbon1.chkChronoSort.Checked = true;
+
             Globals.Ribbons.Ribbon1.chkChronoSort.Click += chkChronoSort_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
@@ -52,39 +44,48 @@ namespace OutlookDomainMailOrganizer
             Application.NewMail += NewMail;
         }
 
-        private void btnRefresh_Click(object sender, RibbonControlEventArgs e)
+        private DomainMailOrganizer.OrganizerLogic InitOrganizer()
         {
-            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+            DomainMailOrganizer.OrganizerLogic organizerLogic = null;
 
-            organizerLogic = null;
+            if (organizerLogic == null)
+            {
+                organizerLogic = new DomainMailOrganizer.OrganizerLogic(
+                    Application,
+                    domainsFolderName,
+                    archiveFolderName,
+                    Globals.Ribbons.Ribbon1.chkChronoSort.Checked
+                );
+
+                organizerLogic.MessagesRemainingEventHandler += OrganizerLogic_MessagesRemainingEvent;
+            }
+
+            return organizerLogic;
         }
 
-        private void chkChronoSort_Click(object sender, RibbonControlEventArgs e)
-        {
-            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+        #endregion
 
-            organizerLogic = null;
-        }
+        #region Event Handlers
 
         private void btnOrganizeInbox_Click(object sender, RibbonControlEventArgs e)
         {
-            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+            var organizer = InitOrganizer();
 
-            InitializeOrganizerLogic();
+            System.Threading.Thread t = null;
 
             switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
             {
                 case 1:
-                    t = new System.Threading.Thread(organizerLogic.ProcessInbox1Day);
+                    t = new System.Threading.Thread(organizer.ProcessInbox1Day);
                     break;
                 case 7:
-                    t = new System.Threading.Thread(organizerLogic.ProcessInbox7Day);
+                    t = new System.Threading.Thread(organizer.ProcessInbox7Day);
                     break;
                 case 30:
-                    t = new System.Threading.Thread(organizerLogic.ProcessInbox30Day);
+                    t = new System.Threading.Thread(organizer.ProcessInbox30Day);
                     break;
                 default:
-                    t = new System.Threading.Thread(organizerLogic.ProcessInboxAll);
+                    t = new System.Threading.Thread(organizer.ProcessInboxAll);
                     break;
             }
 
@@ -94,23 +95,23 @@ namespace OutlookDomainMailOrganizer
 
         private void btnOrganizeArchive_Click(object sender, RibbonControlEventArgs e)
         {
-            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
+            var organizer = InitOrganizer();
 
-            InitializeOrganizerLogic();
+            System.Threading.Thread t = null;
 
             switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
             {
                 case 1:
-                    t = new System.Threading.Thread(organizerLogic.ProcessArchive1Day);
+                    t = new System.Threading.Thread(organizer.ProcessArchive1Day);
                     break;
                 case 7:
-                    t = new System.Threading.Thread(organizerLogic.ProcessArchive7Day);
+                    t = new System.Threading.Thread(organizer.ProcessArchive7Day);
                     break;
                 case 30:
-                    t = new System.Threading.Thread(organizerLogic.ProcessArchive30Day);
+                    t = new System.Threading.Thread(organizer.ProcessArchive30Day);
                     break;
                 default:
-                    t = new System.Threading.Thread(organizerLogic.ProcessArchiveAll);
+                    t = new System.Threading.Thread(organizer.ProcessArchiveAll);
                     break;
             }
 
@@ -120,31 +121,18 @@ namespace OutlookDomainMailOrganizer
 
         private void NewMail()
         {
-            if (t != null && t.ThreadState == System.Threading.ThreadState.Running) return;
-
-            InitializeOrganizerLogic();
-
-            t = new System.Threading.Thread(organizerLogic.ProcessInboxUnread);
+            var organizer = InitOrganizer();
+            var t = new System.Threading.Thread(organizer.ProcessInboxUnread);
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
         }
 
-        private void InitializeOrganizerLogic()
+        private void chkChronoSort_Click(object sender, RibbonControlEventArgs e)
         {
-            lock (_lockObject)
-            {
-                if (organizerLogic == null)
-                {
-                    organizerLogic = new DomainMailOrganizer.OrganizerLogic(
-                        Application,
-                        domainsFolderName,
-                        inboxArchiveFolderName,
-                        Globals.Ribbons.Ribbon1.chkChronoSort.Checked
-                    );
-
-                    organizerLogic.MessagesRemainingEventHandler += OrganizerLogic_MessagesRemainingEvent;
-                }
-            }
+            var organizer = InitOrganizer();
+            var t = new System.Threading.Thread(organizer.ChronoSortFolders);
+            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            t.Start();
         }
 
         private void OrganizerLogic_MessagesRemainingEvent(int messagesRemaining)
