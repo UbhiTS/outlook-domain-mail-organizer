@@ -18,8 +18,6 @@ namespace OutlookDomainMailOrganizer
 
         private void ODMOAddIn_Startup(object sender, System.EventArgs e)
         {
-            Globals.Ribbons.Ribbon1.chkChronoSort.Checked = true;
-
             InitPlugin();
         }
 
@@ -35,7 +33,7 @@ namespace OutlookDomainMailOrganizer
 
         private void InitPlugin()
         {
-            //Globals.Ribbons.Ribbon1.chkChronoSort.Checked = true;
+            Globals.Ribbons.Ribbon1.chkChronoSort.Checked = true;
 
             Globals.Ribbons.Ribbon1.chkChronoSort.Click += chkChronoSort_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
