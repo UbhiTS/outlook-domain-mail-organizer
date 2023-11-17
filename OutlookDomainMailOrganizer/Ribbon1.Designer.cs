@@ -41,8 +41,6 @@
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl4 = this.Factory.CreateRibbonDropDownItem();
             this.tab1 = this.Factory.CreateRibbonTab();
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
-            this.btnRefresh = this.Factory.CreateRibbonButton();
-            this.separator4 = this.Factory.CreateRibbonSeparator();
             this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
             this.separator3 = this.Factory.CreateRibbonSeparator();
             this.box2 = this.Factory.CreateRibbonBox();
@@ -66,8 +64,6 @@
             // 
             // grpDomainMailOrganizer
             // 
-            this.grpDomainMailOrganizer.Items.Add(this.btnRefresh);
-            this.grpDomainMailOrganizer.Items.Add(this.separator4);
             this.grpDomainMailOrganizer.Items.Add(this.chkChronoSort);
             this.grpDomainMailOrganizer.Items.Add(this.separator3);
             this.grpDomainMailOrganizer.Items.Add(this.box2);
@@ -78,18 +74,6 @@
             this.grpDomainMailOrganizer.Items.Add(this.btnProcessingQueue);
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
-            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
-            this.btnRefresh.Label = "Reload Config";
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.ShowImage = true;
-            // 
-            // separator4
-            // 
-            this.separator4.Name = "separator4";
             // 
             // chkChronoSort
             // 
@@ -192,8 +176,6 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonBox box2;
         internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnProcessingQueue;
-        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnRefresh;
-        internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator4;
     }
 
     partial class ThisRibbonCollection

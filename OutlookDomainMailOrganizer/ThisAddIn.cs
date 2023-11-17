@@ -39,7 +39,7 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
 
-            Application.NewMail += NewMail;
+            // Application.NewMail += NewMail;
         }
 
         private DomainMailOrganizer.OrganizerLogic InitOrganizer()
