@@ -1,6 +1,7 @@
 # Outlook Domain Mail Organizer
 A Microsoft Outlook plugin to help organize your mails when you are working with many customers
-![image](https://github.com/UbhiTS/outlook-domain-mail-organizer/assets/3799525/439db124-6266-462c-9b33-e55ee5e49805)
+![image](https://github.com/UbhiTS/outlook-domain-mail-organizer/assets/3799525/f9561809-ae2c-43ec-825b-e9a3c6f82bee)
+
 
 ## Motivation
 1. Having a very **noisy inbox** and **missing important customer mails** due to promotions, trainings, dl groups etc.
