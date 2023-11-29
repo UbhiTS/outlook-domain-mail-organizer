@@ -38,10 +38,10 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
 I hope this helps keep your inboxes clean!
 
 ## Experience
-- If the **sender, or one of the recipients (to, cc)** is from the domain @xyz.com, it will land in the xyz.com folder.
-- if the **subject** contains the customers domain, or any keyword defined in the description of the folder, mail will be moved to that folder
-- if the **body** contains the customers domain, or any keyword defined in the description of the folder, mail will be moved to that folder
-- else leave it in inbox for you to review and archive
+   - If the **sender, or one of the recipients (to, cc)** is from the domain @xyz.com, it will land in the xyz.com folder.
+   - if the **subject** contains the customers domain, or any **keyword defined in the description of the folder**, mail will be moved to that folder
+   - if the **body** contains the customers domain, or any **keyword defined in the description of the folder**, mail will be moved to that folder
+   - else leave it in inbox for you to review and archive later
 
 
 ## Caution (update > almost fixed with background tasks on STA threads)
