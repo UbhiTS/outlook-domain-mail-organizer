@@ -22,6 +22,8 @@ namespace DomainMailOrganizer
         const string PR_SENT_REPRESENTING_ENTRYID = @"http://schemas.microsoft.com/mapi/proptag/0x00410102";
         const string PR_SORT_POSITION = @"http://schemas.microsoft.com/mapi/proptag/0x30200102";
 
+        const string ARCHIVE_FOLDER_NAME = @"Archive";
+
         #endregion
 
         #region Private Members
@@ -44,11 +46,11 @@ namespace DomainMailOrganizer
 
         #region Constructor
 
-        public OrganizerLogic(Application app, string domainsFolderName, string archiveFolderName, bool chronoSortEnabled)
+        public OrganizerLogic(Application app, string domainsFolderName, bool chronoSortEnabled)
         {
             outlook = app;
             domainsFolder = GetOutlookFolder(domainsFolderName);
-            archiveFolder = GetOutlookFolder(archiveFolderName);
+            archiveFolder = GetOutlookFolder(ARCHIVE_FOLDER_NAME);
             sortEnabled = chronoSortEnabled;
         }
 
@@ -56,15 +58,15 @@ namespace DomainMailOrganizer
 
         #region Public Methods
 
-        public void ProcessInboxUnread()
-        {
-            var filter = "[Unread] = True And [ReceivedTime] > '" + DateTime.Now.AddHours(-1).ToString("MM/dd/yyyy HH:mm") + "'";
-            ProcessMessages(inboxFolder, filter);
-        }
-
         public void ProcessInbox1Day()
         {
             var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            ProcessMessages(inboxFolder, filter);
+        }
+
+        public void ProcessInbox2Day()
+        {
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-2).ToString("MM/dd/yyyy HH:mm") + "'";
             ProcessMessages(inboxFolder, filter);
         }
 
@@ -91,6 +93,12 @@ namespace DomainMailOrganizer
             ProcessMessages(archiveFolder, filter);
         }
 
+        public void ProcessArchive2Day()
+        {
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-2).ToString("MM/dd/yyyy HH:mm") + "'";
+            ProcessMessages(archiveFolder, filter);
+        }
+
         public void ProcessArchive7Day()
         {
             var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
@@ -106,6 +114,11 @@ namespace DomainMailOrganizer
         public void ProcessArchiveAll()
         {
             ProcessMessages(archiveFolder, null);
+        }
+
+        public void ArchiveAllInboxItems()
+        {
+            ArchiveInboxItems();
         }
 
         public void ChronoSortFolders()
@@ -223,12 +236,8 @@ namespace DomainMailOrganizer
         {
             if (dbsInit == false) InitDBs();
             if (foldersSortInit == false) ChronoSortFolders();
-            {
-                
-                
-            }
 
-            Items items = null;
+            Items items;
 
             if (filter == null || filter == string.Empty)
             {
@@ -357,6 +366,68 @@ namespace DomainMailOrganizer
                 ChronoSortFolders();
                 //MessageBox.Show("Please restart Outlook to restore the chronological folder sorting.", "Add-In: Domain Mail Organizer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 Debug.WriteLine("Please restart Outlook to restore the chronological folder sorting.");
+            }
+        }
+
+        private void ArchiveInboxItems()
+        {
+            var items = inboxFolder.Items;
+            var itemsCount = items.Count;
+
+            for (int i = itemsCount; i > 0; i--)
+            {
+                Debug.Write(i.ToString());
+
+                object message = items[i];
+
+                if (message == null) continue;
+
+                switch (message)
+                {
+                    case MailItem _:
+                        {
+                            Debug.Write(" mail");
+                            var mail = message as MailItem;
+                            mail.Move(archiveFolder);
+                            break;
+                        }
+
+                    case AppointmentItem _:
+                        {
+                            Debug.Write(" appointment");
+                            var appt = message as AppointmentItem;
+                            appt.Move(archiveFolder);
+                            break;
+                        }
+
+                    case MeetingItem _:
+                        {
+                            Debug.Write(" meeting");
+                            var meeting = message as MeetingItem;
+                            meeting.Move(archiveFolder);
+                            break;
+                        }
+
+                    case ContactItem _:
+                        Debug.Write(" Contact");
+                        break;
+                    case Folder _:
+                        Debug.Write(" Folder");
+                        break;
+                    case NoteItem _:
+                        Debug.Write(" Note");
+                        break;
+                    case PostItem _:
+                        Debug.Write(" Post");
+                        break;
+                    case TaskItem _:
+                        Debug.Write(" Task");
+                        break;
+                }
+
+                Debug.WriteLine("");
+
+                MessagesRemainingEventHandler?.Invoke(i - 1);
             }
         }
 

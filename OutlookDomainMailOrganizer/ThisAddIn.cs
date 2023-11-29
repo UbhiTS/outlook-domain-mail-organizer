@@ -10,7 +10,6 @@ namespace OutlookDomainMailOrganizer
         #region Config Parameters
 
         string domainsFolderName = "Customers";
-        string archiveFolderName = "Inbox-Archive";
 
         #endregion
 
@@ -38,6 +37,7 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.chkChronoSort.Click += chkChronoSort_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
+            Globals.Ribbons.Ribbon1.btnMoveToArchive.Click += btnMoveToArchive_Click;
 
             // Application.NewMail += NewMail;
         }
@@ -51,7 +51,6 @@ namespace OutlookDomainMailOrganizer
                 organizerLogic = new DomainMailOrganizer.OrganizerLogic(
                     Application,
                     domainsFolderName,
-                    archiveFolderName,
                     Globals.Ribbons.Ribbon1.chkChronoSort.Checked
                 );
 
@@ -75,6 +74,9 @@ namespace OutlookDomainMailOrganizer
             {
                 case 1:
                     t = new System.Threading.Thread(organizer.ProcessInbox1Day);
+                    break;
+                case 2:
+                    t = new System.Threading.Thread(organizer.ProcessInbox2Day);
                     break;
                 case 7:
                     t = new System.Threading.Thread(organizer.ProcessInbox7Day);
@@ -102,6 +104,9 @@ namespace OutlookDomainMailOrganizer
                 case 1:
                     t = new System.Threading.Thread(organizer.ProcessArchive1Day);
                     break;
+                case 2:
+                    t = new System.Threading.Thread(organizer.ProcessArchive2Day);
+                    break;
                 case 7:
                     t = new System.Threading.Thread(organizer.ProcessArchive7Day);
                     break;
@@ -117,10 +122,10 @@ namespace OutlookDomainMailOrganizer
             t.Start();
         }
 
-        private void NewMail()
+        private void btnMoveToArchive_Click(object sender, RibbonControlEventArgs e)
         {
             var organizer = InitOrganizer();
-            var t = new System.Threading.Thread(organizer.ProcessInboxUnread);
+            var t = new System.Threading.Thread(organizer.ArchiveAllInboxItems);
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
         }

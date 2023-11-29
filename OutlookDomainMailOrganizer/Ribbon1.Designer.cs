@@ -39,6 +39,7 @@
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl2 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl3 = this.Factory.CreateRibbonDropDownItem();
             Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl4 = this.Factory.CreateRibbonDropDownItem();
+            Microsoft.Office.Tools.Ribbon.RibbonDropDownItem ribbonDropDownItemImpl5 = this.Factory.CreateRibbonDropDownItem();
             this.tab1 = this.Factory.CreateRibbonTab();
             this.grpDomainMailOrganizer = this.Factory.CreateRibbonGroup();
             this.chkChronoSort = this.Factory.CreateRibbonToggleButton();
@@ -50,6 +51,8 @@
             this.btnOrganizeArchive = this.Factory.CreateRibbonButton();
             this.separator1 = this.Factory.CreateRibbonSeparator();
             this.btnProcessingQueue = this.Factory.CreateRibbonButton();
+            this.separator4 = this.Factory.CreateRibbonSeparator();
+            this.btnMoveToArchive = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
             this.box2.SuspendLayout();
@@ -72,6 +75,8 @@
             this.grpDomainMailOrganizer.Items.Add(this.btnOrganizeArchive);
             this.grpDomainMailOrganizer.Items.Add(this.separator1);
             this.grpDomainMailOrganizer.Items.Add(this.btnProcessingQueue);
+            this.grpDomainMailOrganizer.Items.Add(this.separator4);
+            this.grpDomainMailOrganizer.Items.Add(this.btnMoveToArchive);
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
             // 
@@ -98,16 +103,19 @@
             this.ddDays.Image = ((System.Drawing.Image)(resources.GetObject("ddDays.Image")));
             ribbonDropDownItemImpl1.Label = "1 Day";
             ribbonDropDownItemImpl1.Tag = "1";
-            ribbonDropDownItemImpl2.Label = "7 Days";
-            ribbonDropDownItemImpl2.Tag = "7";
-            ribbonDropDownItemImpl3.Label = "30 Days";
-            ribbonDropDownItemImpl3.Tag = "30";
-            ribbonDropDownItemImpl4.Label = "All";
-            ribbonDropDownItemImpl4.Tag = "0";
+            ribbonDropDownItemImpl2.Label = "2 Days";
+            ribbonDropDownItemImpl2.Tag = "2";
+            ribbonDropDownItemImpl3.Label = "7 Days";
+            ribbonDropDownItemImpl3.Tag = "7";
+            ribbonDropDownItemImpl4.Label = "30 Days";
+            ribbonDropDownItemImpl4.Tag = "30";
+            ribbonDropDownItemImpl5.Label = "All";
+            ribbonDropDownItemImpl5.Tag = "0";
             this.ddDays.Items.Add(ribbonDropDownItemImpl1);
             this.ddDays.Items.Add(ribbonDropDownItemImpl2);
             this.ddDays.Items.Add(ribbonDropDownItemImpl3);
             this.ddDays.Items.Add(ribbonDropDownItemImpl4);
+            this.ddDays.Items.Add(ribbonDropDownItemImpl5);
             this.ddDays.Label = "Days";
             this.ddDays.Name = "ddDays";
             this.ddDays.ShowImage = true;
@@ -124,7 +132,6 @@
             this.btnOrganizeInbox.Label = "Process Inbox";
             this.btnOrganizeInbox.Name = "btnOrganizeInbox";
             this.btnOrganizeInbox.ShowImage = true;
-            this.btnOrganizeInbox.SuperTip = "(24 hours)";
             // 
             // btnOrganizeArchive
             // 
@@ -133,7 +140,6 @@
             this.btnOrganizeArchive.Label = "Process Archive";
             this.btnOrganizeArchive.Name = "btnOrganizeArchive";
             this.btnOrganizeArchive.ShowImage = true;
-            this.btnOrganizeArchive.SuperTip = "(30 days)";
             // 
             // separator1
             // 
@@ -146,6 +152,18 @@
             this.btnProcessingQueue.Label = "0";
             this.btnProcessingQueue.Name = "btnProcessingQueue";
             this.btnProcessingQueue.ShowImage = true;
+            // 
+            // separator4
+            // 
+            this.separator4.Name = "separator4";
+            // 
+            // btnMoveToArchive
+            // 
+            this.btnMoveToArchive.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnMoveToArchive.Image = ((System.Drawing.Image)(resources.GetObject("btnMoveToArchive.Image")));
+            this.btnMoveToArchive.Label = "Archive Mails";
+            this.btnMoveToArchive.Name = "btnMoveToArchive";
+            this.btnMoveToArchive.ShowImage = true;
             // 
             // Ribbon1
             // 
@@ -176,6 +194,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonBox box2;
         internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator2;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnProcessingQueue;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator4;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMoveToArchive;
     }
 
     partial class ThisRibbonCollection
