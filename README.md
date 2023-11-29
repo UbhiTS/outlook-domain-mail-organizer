@@ -43,25 +43,6 @@ I hope this helps keep your inboxes clean!
    - if the **body** contains the customers domain, or any **keyword defined in the description of the folder**, mail will be moved to that folder
    - else leave it in inbox for you to review and archive later
 
-
-## Caution (update > almost fixed with background tasks on STA threads)
-If you have more than 20000 emails, it could take up to 15 to 30 minutes depending on your PC configuration. If you want to process only new emails, **ensure that you mark all existing mails in the inbox as read**.
-
-If you have recipients from multiple companies, it would depend on the order of the recpients. **The first recipient that matches** any of the domains is the folder that email, or meeting, or appointment will go to. But normally that's not really a use case, is it :) ?
-
-This plugin is not ready for primetime and is not production ready so I do not claim any performance guarantees. In fact, you might have to reenable the plugin if outlook disables it citing performance. If you plugin disappears from your toolbar, you can reenable it via the following process -
-
-Go to File >
-
-![image](https://user-images.githubusercontent.com/3799525/229868171-575e6d09-9411-4577-8939-afb08db0db2f.png)
-
-Go to File > Options
-
-![image](https://user-images.githubusercontent.com/3799525/229867079-941f21b6-271a-463f-90bb-f322260778fa.png)
-
-## Future Roadmap
-- Organize mails based on keywords
-
 # Thank you!
 Hopefully this is useful to you and helps you keep your outlook organized. Thanks for your time.
 Cheers!
