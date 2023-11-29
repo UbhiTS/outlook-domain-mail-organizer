@@ -31,11 +31,18 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
         |- offerup.com
         |- contoso.com
 ```
-4. Restart Outlook
+4. And click the "Process Inbox" Button
+5. Once you have all inbox mails organized, you can archive all inbox items by clicking "Archive Mails" button
+6. In case you overlook an email and add a customer folder after moving all items to the archive, you can always process the Archive folder to re-organize mails just like from the Inbox folder
+
+I hope this helps keep your inboxes clean!
 
 ## Experience
-When a new mail arrives, **all unread emails** in the inbox will be evaluated and moved to matching folders. 
-Even **if one of the recipients (to, cc) or the sender** is of the domain @ebay.com, it will land in the ebay.com folder. This is useful when you are in the cc list.
+- If the **sender, or one of the recipients (to, cc)** is from the domain @xyz.com, it will land in the xyz.com folder.
+- if the **subject** contains the customers domain, or any keyword defined in the description of the folder, mail will be moved to that folder
+- if the **body** contains the customers domain, or any keyword defined in the description of the folder, mail will be moved to that folder
+- else leave it in inbox for you to review and archive
+
 
 ## Caution (update > almost fixed with background tasks on STA threads)
 If you have more than 20000 emails, it could take up to 15 to 30 minutes depending on your PC configuration. If you want to process only new emails, **ensure that you mark all existing mails in the inbox as read**.
