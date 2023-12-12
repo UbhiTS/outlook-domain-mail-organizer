@@ -16,8 +16,8 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
 1. Download the code, compile it in Visual Studio (with VSTO development plugin)
 2. Start the project **(steps 1 and 2 need to be done one time only)**
 4. Once Outlook starts
-   -  Create a "Customers" folder in the **mailbox root**
-   -  Create a subfolder for each of your Customer domains you wish to auto organize
+   -  Create a "Domains" folder in the **mailbox root**
+   -  Create a subfolder for each of your domains you get email from that you wish to auto organize
    -  (e.g. if I work with these 4 companies, I will have my folder structure as follows)
 ```
       Inbox
@@ -25,7 +25,7 @@ A Microsoft Outlook plugin to help organize your mails when you are working with
       Sent Items
       Drafts
       Deleted Items
-      Customers
+      Domains
         |- ebay.com
         |- expedia.com
         |- offerup.com
