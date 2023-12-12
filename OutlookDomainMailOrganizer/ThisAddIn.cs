@@ -9,7 +9,7 @@ namespace OutlookDomainMailOrganizer
     {
         #region Config Parameters
 
-        string domainsFolderName = "Customers";
+        string domainsFolderName = "Domains";
 
         #endregion
 
