@@ -324,7 +324,24 @@ namespace DomainMailOrganizer
 
                             break;
                         }
+                    case ReportItem _:
+                        {
+                            Debug.Write(" report");
 
+                            var report = message as ReportItem;
+                            var matchedDomain = GetDomainFromSubject(report.Subject)
+                                ?? GetDomainFromBody(report.Body);
+
+                            if (matchedDomain != null)
+                            {
+                                var matchedFolder = domainsDb[matchedDomain];
+                                report.Move(matchedFolder);
+                                MoveFolderToTop(matchedFolder);
+                                Debug.Write("| moved <sender> (" + matchedDomain + ")");
+                            }
+
+                        }
+                        break;
                     case ContactItem _:
                         Debug.Write(" Contact");
                         break;
@@ -339,6 +356,9 @@ namespace DomainMailOrganizer
                         break;
                     case TaskItem _:
                         Debug.Write(" Task");
+                        break;
+                    default:
+                        Debug.Write(" Other");
                         break;
                 }
 
@@ -408,6 +428,14 @@ namespace DomainMailOrganizer
                             break;
                         }
 
+                    case ReportItem _:
+                        {
+                            Debug.Write(" report");
+                            var report = message as ReportItem;
+                            report.Move(archiveFolder);
+                            break;
+                        }
+
                     case ContactItem _:
                         Debug.Write(" Contact");
                         break;
@@ -422,6 +450,9 @@ namespace DomainMailOrganizer
                         break;
                     case TaskItem _:
                         Debug.Write(" Task");
+                        break;
+                    default:
+                        Debug.Write(" Other");
                         break;
                 }
 

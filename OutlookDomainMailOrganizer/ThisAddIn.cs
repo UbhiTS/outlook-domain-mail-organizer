@@ -2,6 +2,7 @@
 using Microsoft.Office.Tools.Ribbon;
 using Microsoft.Office.Interop.Outlook;
 using System;
+using System.Linq;
 
 namespace OutlookDomainMailOrganizer
 {
@@ -38,6 +39,8 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
             Globals.Ribbons.Ribbon1.btnMoveToArchive.Click += btnMoveToArchive_Click;
+
+            Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "2").First();
 
             // Application.NewMail += NewMail;
         }
