@@ -5,6 +5,8 @@ using System.Linq;
 using System.Xml.Linq;
 using Microsoft.Office.Interop.Outlook;
 
+// https://learn.microsoft.com/en-us/office/vba/api/overview/outlook/object-model
+
 namespace DomainMailOrganizer
 {
     public class OrganizerLogic
@@ -131,7 +133,9 @@ namespace DomainMailOrganizer
 
             foreach (var folderName in domainsDb.Keys)
             {
-                var items = domainsDb[folderName].Items;
+                var items = domainsDb[folderName].Items.Restrict("Not([MessageClass] = 'REPORT.IPM.Note.NDR')");
+                // the above restriction is because the "Undelivered Mail Reports"
+                // in Outlook do not contain the RecievedTime property
 
                 if (items != null)
                 {
@@ -329,6 +333,7 @@ namespace DomainMailOrganizer
                             Debug.Write(" report");
 
                             var report = message as ReportItem;
+
                             var matchedDomain = GetDomainFromSubject(report.Subject)
                                 ?? GetDomainFromBody(report.Body);
 
@@ -339,7 +344,6 @@ namespace DomainMailOrganizer
                                 MoveFolderToTop(matchedFolder);
                                 Debug.Write("| moved <sender> (" + matchedDomain + ")");
                             }
-
                         }
                         break;
                     case ContactItem _:

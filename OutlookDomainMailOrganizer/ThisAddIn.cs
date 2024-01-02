@@ -71,6 +71,10 @@ namespace OutlookDomainMailOrganizer
         {
             var organizer = InitOrganizer();
 
+#if DEBUG
+            organizer.ProcessInboxAll();
+#else
+
             System.Threading.Thread t = null;
 
             switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
@@ -94,11 +98,16 @@ namespace OutlookDomainMailOrganizer
 
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
+#endif
         }
 
         private void btnOrganizeArchive_Click(object sender, RibbonControlEventArgs e)
         {
             var organizer = InitOrganizer();
+
+#if DEBUG
+            organizer.ProcessArchiveAll();
+#else
 
             System.Threading.Thread t = null;
 
@@ -123,6 +132,7 @@ namespace OutlookDomainMailOrganizer
 
             t.SetApartmentState(System.Threading.ApartmentState.STA);
             t.Start();
+#endif
         }
 
         private void btnMoveToArchive_Click(object sender, RibbonControlEventArgs e)
@@ -146,7 +156,7 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.btnProcessingQueue.Label = messagesRemaining.ToString();
         }
 
-        #endregion
+#endregion
 
         #region VSTO generated code
 
