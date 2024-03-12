@@ -199,7 +199,7 @@
       <DependentUpon>Ribbon1.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="app.config" />
-    <None Include="OutlookDomainMailOrganizer_4_TemporaryKey.pfx" />
+    <None Include="OutlookDomainMailOrganizer_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -240,10 +240,10 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>OutlookDomainMailOrganizer_4_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>OutlookDomainMailOrganizer_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>4DD751CCD752339108BCB818499AD8825990A2FE</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>2D9BB084F003F80B63B9765F604B8EA6968F59A2</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

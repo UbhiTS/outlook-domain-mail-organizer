@@ -154,6 +154,11 @@ namespace OutlookDomainMailOrganizer
         private void OrganizerLogic_MessagesRemainingEvent(int messagesRemaining)
         {
             Globals.Ribbons.Ribbon1.btnProcessingQueue.Label = messagesRemaining.ToString();
+
+            if (messagesRemaining == 0 && Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString() != "2")
+            {
+                Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "2").First();
+            }
         }
 
 #endregion
