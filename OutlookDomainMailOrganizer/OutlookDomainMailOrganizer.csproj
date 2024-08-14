@@ -243,7 +243,7 @@
     <ManifestKeyFile>OutlookDomainMailOrganizer_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2D9BB084F003F80B63B9765F604B8EA6968F59A2</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>27B9ACDB32238D1B05DFF11BC43D077F7D9B38F0</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

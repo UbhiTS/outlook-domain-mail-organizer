@@ -40,7 +40,7 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
             Globals.Ribbons.Ribbon1.btnMoveToArchive.Click += btnMoveToArchive_Click;
 
-            Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "2").First();
+            Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "7").First();
 
             // Application.NewMail += NewMail;
         }

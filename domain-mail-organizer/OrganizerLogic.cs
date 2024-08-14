@@ -133,7 +133,10 @@ namespace DomainMailOrganizer
 
             foreach (var folderName in domainsDb.Keys)
             {
-                var items = domainsDb[folderName].Items.Restrict("Not([MessageClass] = 'REPORT.IPM.Note.NDR')");
+                // ################################################################################################
+                // ##### IF A FOLDER FAILS TO PARSE SUCCESSFULLY AND THROWING AN ERROR STATING 'ReceivedTime' #####
+                // ################################################################################################
+                var items = domainsDb[folderName].Items.Restrict("Not([MessageClass] = 'REPORT.IPM.Note.NDR' or [MessageClass] = 'REPORT.IPM.Schedule.Meeting.Resp.Neg.NDR')");
                 // the above restriction is because the "Undelivered Mail Reports"
                 // in Outlook do not contain the RecievedTime property
 
@@ -274,7 +277,7 @@ namespace DomainMailOrganizer
                                 ?? GetDomainFromSubject(mail.Subject)
                                 ?? GetDomainFromBody(mail.Body);
 
-                            if (matchedDomain != null)
+                            if (matchedDomain != null && mail.FlagStatus != OlFlagStatus.olFlagMarked)
                             {
                                 var matchedFolder = domainsDb[matchedDomain];
                                 mail.Move(matchedFolder);
@@ -318,7 +321,7 @@ namespace DomainMailOrganizer
                                 ?? GetDomainFromSubject(meeting.Subject)
                                 ?? GetDomainFromBody(meeting.Body);
 
-                            if (matchedDomain != null)
+                            if (matchedDomain != null && meeting.FlagStatus != OlFlagStatus.olFlagMarked)
                             {
                                 var matchedFolder = domainsDb[matchedDomain];
                                 meeting.Move(matchedFolder);
@@ -412,7 +415,10 @@ namespace DomainMailOrganizer
                         {
                             Debug.Write(" mail");
                             var mail = message as MailItem;
-                            mail.Move(archiveFolder);
+                            if (mail.FlagStatus != OlFlagStatus.olFlagMarked)
+                            {
+                                mail.Move(archiveFolder);
+                            }
                             break;
                         }
 
@@ -428,7 +434,10 @@ namespace DomainMailOrganizer
                         {
                             Debug.Write(" meeting");
                             var meeting = message as MeetingItem;
-                            meeting.Move(archiveFolder);
+                            if (meeting.FlagStatus != OlFlagStatus.olFlagMarked)
+                            {
+                                meeting.Move(archiveFolder);
+                            }
                             break;
                         }
 
