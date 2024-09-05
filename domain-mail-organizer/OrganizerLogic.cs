@@ -446,15 +446,15 @@ namespace DomainMailOrganizer
 
                         // if (mail.SenderEmailType == "EX") return GetDomainFromAddressEntry(mail.Sender);
 
-                        if (mail.SenderEmailAddress.EndsWith(folder.Name))
+                        if (mail.SenderEmailAddress.EndsWith(folder.Name, StringComparison.CurrentCultureIgnoreCase))
                         {
-                            if (addresses.Keys.Contains(mail.SenderEmailAddress))
+                            if (addresses.Keys.Contains(mail.SenderEmailAddress.ToLower()))
                             {
-                                addresses[mail.SenderEmailAddress]++;
+                                addresses[mail.SenderEmailAddress.ToLower()]++;
                             }
                             else
                             {
-                                addresses.Add(mail.SenderEmailAddress, 1);
+                                addresses.Add(mail.SenderEmailAddress.ToLower(), 1);
                             }
                         }
 
@@ -462,15 +462,15 @@ namespace DomainMailOrganizer
                         {
                             var address = GetEmailAddressFromRecipient(recipient);
 
-                            if (address.EndsWith(folder.Name))
+                            if (address.EndsWith(folder.Name, StringComparison.CurrentCultureIgnoreCase))
                             {
-                                if (addresses.Keys.Contains(address))
+                                if (addresses.Keys.Contains(address.ToLower()))
                                 {
-                                    addresses[address]++;
+                                    addresses[address.ToLower()]++;
                                 }
                                 else
                                 {
-                                    addresses.Add(address, 1);
+                                    addresses.Add(address.ToLower(), 1);
                                 }
                             }
                         }
