@@ -16,6 +16,9 @@ namespace DomainMailOrganizer
         public delegate void MessagesRemainingEvent(int messagesRemaining);
         public event MessagesRemainingEvent MessagesRemainingEventHandler;
 
+        public delegate void InfoEvent(string info);
+        public event InfoEvent InfoEventHandler;
+
         #endregion
 
         #region Constants
@@ -121,6 +124,35 @@ namespace DomainMailOrganizer
         public void ArchiveAllInboxItems()
         {
             ArchiveInboxItems();
+        }
+
+        public void ListEmails1Day()
+        {
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-1).ToString("MM/dd/yyyy HH:mm") + "'";
+            ListEmails(filter);
+        }
+
+        public void ListEmails2Day()
+        {
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-2).ToString("MM/dd/yyyy HH:mm") + "'";
+            ListEmails(filter);
+        }
+
+        public void ListEmails7Day()
+        {
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-7).ToString("MM/dd/yyyy HH:mm") + "'";
+            ListEmails(filter);
+        }
+
+        public void ListEmails30Day()
+        {
+            var filter = "[ReceivedTime] > '" + DateTime.Now.AddDays(-30).ToString("MM/dd/yyyy HH:mm") + "'";
+            ListEmails(filter);
+        }
+
+        public void ListEmailsAll()
+        {
+            ListEmails(null);
         }
 
         public void ChronoSortFolders()
@@ -372,6 +404,102 @@ namespace DomainMailOrganizer
                 Debug.WriteLine("");
 
                 MessagesRemainingEventHandler?.Invoke(i-1);
+            }
+        }
+
+        private void ListEmails(string filter)
+        {
+            var addresses = new Dictionary<string, int>();
+
+            var folder = (Folder)outlook.ActiveExplorer().CurrentFolder;
+
+            Items items;
+
+            if (filter == null || filter == string.Empty)
+            {
+                items = folder.Items;
+            }
+            else
+            {
+                items = folder.Items.Restrict(filter);
+            }
+
+            var itemsCount = items.Count;
+
+            for (int i = itemsCount; i > 0; i--)
+            {
+                Debug.Write(i.ToString());
+
+                object message = items[i];
+
+                if (message == null) continue;
+
+                switch (message)
+                {
+                    case MailItem _:
+                    {
+                        Debug.Write(" mail");
+
+                        var mail = message as MailItem;
+
+                        if (mail == null) continue;
+
+                        // if (mail.SenderEmailType == "EX") return GetDomainFromAddressEntry(mail.Sender);
+
+                        if (mail.SenderEmailAddress.EndsWith(folder.Name))
+                        {
+                            if (addresses.Keys.Contains(mail.SenderEmailAddress))
+                            {
+                                addresses[mail.SenderEmailAddress]++;
+                            }
+                            else
+                            {
+                                addresses.Add(mail.SenderEmailAddress, 1);
+                            }
+                        }
+
+                        foreach (Recipient recipient in mail.Recipients)
+                        {
+                            var address = GetEmailAddressFromRecipient(recipient);
+
+                            if (address.EndsWith(folder.Name))
+                            {
+                                if (addresses.Keys.Contains(address))
+                                {
+                                    addresses[address]++;
+                                }
+                                else
+                                {
+                                    addresses.Add(address, 1);
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+
+                    case AppointmentItem _:
+                    {
+                        Debug.Write(" appointment");
+
+                        break;
+                    }
+
+                    case MeetingItem _:
+                    {
+
+                        break;
+                    }
+                }
+
+                MessagesRemainingEventHandler?.Invoke(i - 1);
+            }
+
+            var addressesByFrequency = from entry in addresses orderby entry.Value descending select entry.Key;
+
+            if (addressesByFrequency.Count() > 0)
+            {
+                InfoEventHandler?.Invoke(string.Join(";", addressesByFrequency));
             }
         }
 

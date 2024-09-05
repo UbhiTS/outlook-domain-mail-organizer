@@ -53,6 +53,8 @@
             this.btnProcessingQueue = this.Factory.CreateRibbonButton();
             this.separator4 = this.Factory.CreateRibbonSeparator();
             this.btnMoveToArchive = this.Factory.CreateRibbonButton();
+            this.separator5 = this.Factory.CreateRibbonSeparator();
+            this.btnListEmails = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.grpDomainMailOrganizer.SuspendLayout();
             this.box2.SuspendLayout();
@@ -77,6 +79,8 @@
             this.grpDomainMailOrganizer.Items.Add(this.btnProcessingQueue);
             this.grpDomainMailOrganizer.Items.Add(this.separator4);
             this.grpDomainMailOrganizer.Items.Add(this.btnMoveToArchive);
+            this.grpDomainMailOrganizer.Items.Add(this.separator5);
+            this.grpDomainMailOrganizer.Items.Add(this.btnListEmails);
             this.grpDomainMailOrganizer.Label = "Domain Mail Organizer";
             this.grpDomainMailOrganizer.Name = "grpDomainMailOrganizer";
             // 
@@ -165,6 +169,18 @@
             this.btnMoveToArchive.Name = "btnMoveToArchive";
             this.btnMoveToArchive.ShowImage = true;
             // 
+            // separator5
+            // 
+            this.separator5.Name = "separator5";
+            // 
+            // btnListEmails
+            // 
+            this.btnListEmails.ControlSize = Microsoft.Office.Core.RibbonControlSize.RibbonControlSizeLarge;
+            this.btnListEmails.Image = ((System.Drawing.Image)(resources.GetObject("btnListEmails.Image")));
+            this.btnListEmails.Label = "List Emails";
+            this.btnListEmails.Name = "btnListEmails";
+            this.btnListEmails.ShowImage = true;
+            // 
             // Ribbon1
             // 
             this.Name = "Ribbon1";
@@ -196,6 +212,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnProcessingQueue;
         internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator4;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton btnMoveToArchive;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton btnListEmails;
+        internal Microsoft.Office.Tools.Ribbon.RibbonSeparator separator5;
     }
 
     partial class ThisRibbonCollection

@@ -39,6 +39,7 @@ namespace OutlookDomainMailOrganizer
             Globals.Ribbons.Ribbon1.btnOrganizeInbox.Click += btnOrganizeInbox_Click;
             Globals.Ribbons.Ribbon1.btnOrganizeArchive.Click += btnOrganizeArchive_Click;
             Globals.Ribbons.Ribbon1.btnMoveToArchive.Click += btnMoveToArchive_Click;
+            Globals.Ribbons.Ribbon1.btnListEmails.Click += btnListEmails_Click;
 
             Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "7").First();
 
@@ -58,6 +59,7 @@ namespace OutlookDomainMailOrganizer
                 );
 
                 organizerLogic.MessagesRemainingEventHandler += OrganizerLogic_MessagesRemainingEvent;
+                organizerLogic.InfoEventHandler += OrganizerLogic_InfoEvent;
             }
 
             return organizerLogic;
@@ -72,7 +74,7 @@ namespace OutlookDomainMailOrganizer
             var organizer = InitOrganizer();
 
 #if DEBUG
-            organizer.ProcessInboxAll();
+            organizer.ProcessInbox30Day();
 #else
 
             System.Threading.Thread t = null;
@@ -143,6 +145,41 @@ namespace OutlookDomainMailOrganizer
             t.Start();
         }
 
+        private void btnListEmails_Click(object sender, RibbonControlEventArgs e)
+        {
+            var organizer = InitOrganizer();
+
+#if DEBUG
+            organizer.ListEmails30Day();
+#else
+
+            System.Threading.Thread t = null;
+
+            switch (int.Parse(Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString()))
+            {
+                case 1:
+                    t = new System.Threading.Thread(organizer.ListEmails1Day);
+                    break;
+                case 2:
+                    t = new System.Threading.Thread(organizer.ListEmails2Day);
+                    break;
+                case 7:
+                    t = new System.Threading.Thread(organizer.ListEmails7Day);
+                    break;
+                case 30:
+                    t = new System.Threading.Thread(organizer.ListEmails30Day);
+                    break;
+                default:
+                    t = new System.Threading.Thread(organizer.ListEmailsAll);
+                    break;
+            }
+
+            t.SetApartmentState(System.Threading.ApartmentState.STA);
+            t.Start();
+#endif
+
+        }
+
         private void chkChronoSort_Click(object sender, RibbonControlEventArgs e)
         {
             var organizer = InitOrganizer();
@@ -155,13 +192,21 @@ namespace OutlookDomainMailOrganizer
         {
             Globals.Ribbons.Ribbon1.btnProcessingQueue.Label = messagesRemaining.ToString();
 
-            if (messagesRemaining == 0 && Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString() != "2")
+            if (messagesRemaining == 0 && Globals.Ribbons.Ribbon1.ddDays.SelectedItem.Tag.ToString() != "7")
             {
-                Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "2").First();
+                Globals.Ribbons.Ribbon1.ddDays.SelectedItem = Globals.Ribbons.Ribbon1.ddDays.Items.Where(x => x.Tag.ToString() == "7").First();
             }
         }
 
-#endregion
+        private void OrganizerLogic_InfoEvent(string info)
+        {
+            if (MessageBox.Show($"Press OK to copy ...{Environment.NewLine}{Environment.NewLine}" + info, "Mailing list", MessageBoxButtons.OKCancel) == System.Windows.Forms.DialogResult.OK)
+            {
+                Clipboard.SetText(info);
+            }
+        }
+
+        #endregion
 
         #region VSTO generated code
 
